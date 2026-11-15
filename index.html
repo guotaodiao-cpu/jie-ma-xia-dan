@@ -1,0 +1,982 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>全球接码下单</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+    <style>
+      button, [role="button"], select, summary, input:not([type="checkbox"], [type="radio"]) { min-height: 2rem; }
+      * { box-sizing: border-box; }
+      :root {
+        --bg: #f3f5f7;
+        --surface: #ffffff;
+        --surface-2: #edf1f4;
+        --ink: #15222d;
+        --muted: #5a6b77;
+        --line: #dce3e9;
+        --accent: #0f83c2;
+        --accent-strong: #0b6ea6;
+        --accent-soft: #e3f2fa;
+        --good: #0d7a47;
+        --good-soft: #e2f3ea;
+        --tile: #ffffff;
+        --shadow: 0 1px 2px rgba(21, 34, 45, .05), 0 8px 24px rgba(21, 34, 45, .06);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0c1218;
+          --surface: #141e28;
+          --surface-2: #1b2834;
+          --ink: #e9f0f5;
+          --muted: #94a7b5;
+          --line: #27363f;
+          --accent: #3aa9e0;
+          --accent-strong: #5cbcec;
+          --accent-soft: #14384c;
+          --good: #3cb878;
+          --good-soft: #143527;
+          --tile: #1b2834;
+          --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .25);
+        }
+      }
+      html { color-scheme: light dark; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap { max-width: 1100px; margin: 0 auto; padding: 20px 16px 56px; }
+
+      /* ---------- hero ---------- */
+      .hero { padding: 14px 0 6px; }
+      .hero-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+      .brand-chip {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: var(--accent); color: #fff;
+        font-weight: 700; font-size: 15px;
+        padding: 7px 14px 7px 11px; border-radius: 999px;
+      }
+      .brand-chip svg { width: 18px; height: 18px; flex: none; }
+      .hero-contact { color: var(--muted); font-size: 14px; }
+      .hero-contact a { color: var(--accent); font-weight: 700; text-decoration: none; }
+      .hero h1 { font-size: clamp(26px, 5.4vw, 38px); font-weight: 900; line-height: 1.2; margin: 16px 0 8px; letter-spacing: .01em; }
+      .hero p { margin: 0; color: var(--muted); font-size: 15.5px; max-width: 660px; }
+      .hero-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+      .tag {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: var(--surface); border: 1px solid var(--line);
+        border-radius: 999px; padding: 6px 12px; font-size: 13.5px; font-weight: 500;
+      }
+      .tag svg { width: 15px; height: 15px; color: var(--good); flex: none; }
+      .tag.refund { background: var(--good-soft); border-color: transparent; color: var(--good); font-weight: 700; }
+
+      /* ---------- steps ---------- */
+      .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 22px 0 6px; }
+      .step {
+        background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+        padding: 12px 14px; display: flex; gap: 10px; align-items: flex-start;
+      }
+      .step-num {
+        flex: none; width: 24px; height: 24px; border-radius: 50%;
+        background: var(--accent-soft); color: var(--accent-strong);
+        font-weight: 900; font-size: 13px; display: grid; place-items: center; margin-top: 1px;
+      }
+      .step b { display: block; font-size: 14.5px; }
+      .step span { color: var(--muted); font-size: 13px; }
+
+      /* ---------- layout ---------- */
+      .layout { display: grid; grid-template-columns: 1fr 372px; gap: 22px; align-items: start; margin-top: 18px; }
+      .section-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+      .section-head h2 { font-size: 20px; font-weight: 900; margin: 0; }
+      .price-note { color: var(--muted); font-size: 13px; }
+      .price-note .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--good); margin-right: 5px; vertical-align: 1px; }
+
+      /* ---------- product grid ---------- */
+      .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(158px, 1fr)); gap: 12px; }
+      .card {
+        position: relative; text-align: left; cursor: pointer;
+        background: var(--surface); border: 1.5px solid var(--line); border-radius: 14px;
+        padding: 16px 14px 14px; font: inherit; color: inherit; width: 100%;
+        transition: border-color .15s ease, box-shadow .15s ease;
+      }
+      .card:hover { border-color: var(--accent); }
+      .card.selected { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+      .card .check {
+        position: absolute; top: 10px; right: 10px; width: 20px; height: 20px; border-radius: 50%;
+        background: var(--accent); color: #fff; display: none; place-items: center;
+      }
+      .card.selected .check { display: grid; }
+      .card .check svg { width: 12px; height: 12px; }
+      .tile {
+        position: relative; width: 46px; height: 46px; border-radius: 11px;
+        background: var(--tile); border: 1px solid var(--line);
+        display: grid; place-items: center; overflow: hidden; margin-bottom: 10px;
+      }
+      .tile .letter { font-weight: 900; font-size: 19px; color: var(--accent-strong); }
+      .tile img { position: absolute; inset: 0; margin: auto; width: 27px; height: 27px; }
+      .card .pname { font-weight: 700; font-size: 16px; line-height: 1.3; }
+      .card .pen { color: var(--muted); font-size: 12.5px; margin-top: 1px; }
+      .card .prow { display: flex; align-items: baseline; gap: 6px; margin-top: 9px; }
+      .card .price { color: var(--good); font-weight: 900; font-size: 19px; font-variant-numeric: tabular-nums; }
+      .card .per { color: var(--muted); font-size: 12.5px; }
+
+      /* ---------- tiers ---------- */
+      .tiers-block { margin-top: 26px; }
+      .tiers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(218px, 1fr)); gap: 10px; }
+      .tier {
+        display: flex; align-items: center; gap: 10px; width: 100%;
+        background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px;
+        padding: 10px 13px; cursor: pointer; font: inherit; color: inherit; text-align: left; min-height: 54px;
+        transition: border-color .15s ease, box-shadow .15s ease;
+      }
+      .tier:hover { border-color: var(--accent); }
+      .tier.selected { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+      .tier-rank {
+        flex: none; width: 22px; height: 22px; border-radius: 50%;
+        background: var(--surface-2); color: var(--muted);
+        font-size: 12px; font-weight: 900; display: grid; place-items: center;
+      }
+      .tier.selected .tier-rank { background: var(--accent); color: #fff; }
+      .tier-main { flex: 1; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-width: 0; }
+      .tier-country { font-weight: 700; font-size: 15px; }
+      .tier-badge {
+        font-size: 11.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px;
+        background: var(--surface-2); color: var(--muted); white-space: nowrap;
+      }
+      .tier-badge.premium { background: var(--accent-soft); color: var(--accent-strong); }
+      .tier-price { font-weight: 900; color: var(--good); font-size: 17px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+      .tiers-empty { color: var(--muted); font-size: 14.5px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+      .fx-note { color: var(--muted); font-size: 13px; margin: 10px 0 0; }
+      .country-note {
+        display: flex; align-items: center; justify-content: center; text-align: center;
+        margin-top: 12px; min-height: 48px; padding: 11px 14px; border-radius: 12px;
+        background: var(--accent-soft); color: var(--accent-strong);
+        font-weight: 700; font-size: 14.5px; line-height: 1.45; text-decoration: none;
+      }
+      .country-note:active { background: var(--accent); color: #fff; }
+
+      /* ---------- order panel ---------- */
+      .order {
+        background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+        box-shadow: var(--shadow); padding: 20px; position: sticky; top: 16px;
+      }
+      .order h2 { font-size: 19px; font-weight: 900; margin: 0 0 14px; }
+      .sel-summary { display: flex; align-items: center; gap: 12px; background: var(--surface-2); border-radius: 12px; padding: 12px; }
+      .sel-summary .tile { width: 42px; height: 42px; margin: 0; border-radius: 10px; }
+      .sel-summary .tile img { width: 24px; height: 24px; }
+      .sel-summary .sname { font-weight: 700; font-size: 16px; line-height: 1.3; }
+      .sel-summary .sprice { color: var(--good); font-weight: 900; font-variant-numeric: tabular-nums; font-size: 14.5px; }
+      .field { margin-top: 16px; }
+      .field .flabel { display: block; font-size: 13.5px; font-weight: 700; margin-bottom: 7px; }
+      input[type="text"], input[type="number"] {
+        width: 100%; font: inherit; font-size: 15px; color: var(--ink);
+        background: var(--surface); border: 1.5px solid var(--line); border-radius: 10px;
+        padding: 9px 12px; min-height: 44px;
+      }
+      input:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: var(--accent); }
+      .qty-row { display: flex; align-items: center; gap: 10px; }
+      .qty-btn {
+        width: 44px; height: 44px; flex: none; border-radius: 10px; cursor: pointer;
+        border: 1.5px solid var(--line); background: var(--surface); color: var(--ink);
+        font-size: 20px; font-weight: 700; display: grid; place-items: center;
+      }
+      .qty-btn:active { background: var(--surface-2); }
+      .qty-val { flex: 1; text-align: center; font-size: 18px; font-weight: 900; font-variant-numeric: tabular-nums; }
+      .pay-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .pay-opt {
+        cursor: pointer; border: 1.5px solid var(--line); border-radius: 12px; background: var(--surface);
+        padding: 10px 6px 9px; text-align: center; font: inherit; color: inherit; min-height: 74px;
+        display: flex; flex-direction: column; align-items: center; gap: 6px; justify-content: center;
+      }
+      .pay-opt .ptile { position: relative; width: 30px; height: 30px; display: grid; place-items: center; }
+      .pay-opt .ptile .letter { font-weight: 900; font-size: 15px; color: var(--muted); }
+      .pay-opt .ptile img { position: absolute; inset: 0; margin: auto; width: 26px; height: 26px; }
+      .pay-opt .pname2 { font-size: 13.5px; font-weight: 700; }
+      .pay-opt.selected { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+      .pay-grid.single { grid-template-columns: 1fr; }
+      .pay-grid.single .pay-opt { flex-direction: row; justify-content: flex-start; gap: 10px; padding: 10px 14px; min-height: 56px; }
+      .pay-notice {
+        display: flex; align-items: center; justify-content: center; text-align: center;
+        margin-top: 10px; min-height: 48px; padding: 11px 14px; border-radius: 12px;
+        background: var(--accent); color: #fff; font-weight: 700; font-size: 14.5px; line-height: 1.45;
+        text-decoration: none;
+      }
+      .pay-banner {
+        display: flex; align-items: center; justify-content: center; text-align: center;
+        min-height: 56px; padding: 14px 18px; border-radius: 14px; margin-bottom: 12px;
+        background: var(--accent); color: #fff; font-weight: 900; font-size: 16.5px; line-height: 1.45;
+        text-decoration: none;
+      }
+      .total-row { display: flex; align-items: baseline; justify-content: space-between; margin-top: 18px; padding-top: 14px; border-top: 1px dashed var(--line); }
+      .total-row .tlabel { color: var(--muted); font-size: 14px; }
+      .total-row .tval { font-size: 26px; font-weight: 900; color: var(--good); font-variant-numeric: tabular-nums; }
+      .preview {
+        margin-top: 12px; background: var(--surface-2); border-radius: 10px; padding: 11px 13px;
+        font-size: 13px; color: var(--muted); white-space: pre-wrap; word-break: break-all; line-height: 1.6;
+      }
+      .cta {
+        display: flex; align-items: center; justify-content: center; gap: 9px;
+        width: 100%; margin-top: 16px; min-height: 52px; border-radius: 12px; border: 0; cursor: pointer;
+        background: var(--accent); color: #fff; font: inherit; font-size: 16.5px; font-weight: 900;
+        text-decoration: none;
+      }
+      .cta:active { background: var(--accent-strong); }
+      .cta svg { width: 19px; height: 19px; flex: none; }
+      .cta-sub {
+        display: flex; align-items: center; justify-content: center; gap: 7px;
+        width: 100%; margin-top: 9px; min-height: 44px; border-radius: 12px; cursor: pointer;
+        background: transparent; border: 1.5px solid var(--line); color: var(--ink);
+        font: inherit; font-size: 14.5px; font-weight: 700;
+      }
+      .order-hint { margin-top: 11px; font-size: 13px; color: var(--muted); text-align: center; }
+
+      /* ---------- pay info / notes ---------- */
+      .block { margin-top: 34px; }
+      .block h2 { font-size: 20px; font-weight: 900; margin: 0 0 12px; }
+      .pay-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+      .pay-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+      .pay-card .pc-head { display: flex; align-items: center; gap: 9px; margin-bottom: 8px; }
+      .pay-card .ptile { position: relative; width: 30px; height: 30px; display: grid; place-items: center; flex: none; }
+      .pay-card .ptile .letter { font-weight: 900; font-size: 15px; color: var(--muted); }
+      .pay-card .ptile img { position: absolute; inset: 0; margin: auto; width: 26px; height: 26px; }
+      .pay-card b { font-size: 15.5px; }
+      .pay-card p { margin: 0; color: var(--muted); font-size: 14px; }
+      .addr-box { margin-top: 10px; display: none; }
+      .addr-box.show { display: block; }
+      .addr-val { background: var(--surface-2); border-radius: 9px; padding: 9px 11px; font-size: 13px; word-break: break-all; font-variant-numeric: tabular-nums; }
+      .addr-copy {
+        margin-top: 8px; min-height: 40px; padding: 0 14px; border-radius: 9px; cursor: pointer;
+        border: 1.5px solid var(--line); background: var(--surface); color: var(--ink);
+        font: inherit; font-size: 13.5px; font-weight: 700;
+      }
+      .notes-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 9px; }
+      .notes-list li { display: flex; gap: 9px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font-size: 14.5px; }
+      .notes-list svg { width: 17px; height: 17px; color: var(--good); flex: none; margin-top: 3px; }
+
+      /* ---------- settings ---------- */
+      .settings { margin-top: 34px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
+      .settings summary { cursor: pointer; padding: 15px 18px; font-weight: 900; font-size: 16px; list-style: none; display: flex; align-items: center; gap: 9px; min-height: 52px; }
+      .settings summary::-webkit-details-marker { display: none; }
+      .settings summary svg { width: 18px; height: 18px; color: var(--muted); }
+      .settings summary .chev { margin-left: auto; transition: transform .15s ease; }
+      .settings[open ] summary .chev { transform: rotate(180deg); }
+      .settings-body { padding: 2px 18px 18px; }
+      .settings-note { color: var(--muted); font-size: 13px; margin: 0 0 14px; }
+      .set-row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; margin-bottom: 8px; }
+      .set-row input { min-height: 42px; }
+      .set-toggle { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 500; padding: 8px 4px; cursor: pointer; white-space: nowrap; }
+      .set-toggle input { width: 19px; height: 19px; accent-color: var(--accent); }
+      .set-del {
+        width: 42px; height: 42px; border-radius: 10px; cursor: pointer; flex: none;
+        border: 1.5px solid var(--line); background: var(--surface); color: var(--muted);
+        font-size: 16px; display: grid; place-items: center;
+      }
+      .set-add { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; margin-top: 12px; }
+      .set-add button {
+        min-height: 44px; padding: 0 16px; border-radius: 10px; cursor: pointer; border: 0;
+        background: var(--accent); color: #fff; font: inherit; font-weight: 700; font-size: 14.5px;
+      }
+      .set-field { margin-top: 18px; }
+      .set-field label { display: block; font-size: 13.5px; font-weight: 700; margin-bottom: 7px; }
+      .set-actions { margin-top: 16px; display: flex; gap: 9px; flex-wrap: wrap; }
+      .set-reset {
+        min-height: 44px; padding: 0 16px; border-radius: 10px; cursor: pointer;
+        border: 1.5px solid var(--line); background: var(--surface); color: var(--ink);
+        font: inherit; font-weight: 700; font-size: 14.5px;
+      }
+
+      footer { margin-top: 36px; color: var(--muted); font-size: 13px; text-align: center; }
+      footer a { color: var(--accent); text-decoration: none; font-weight: 700; }
+
+      .toast {
+        position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 20px);
+        background: var(--ink); color: var(--bg); padding: 11px 20px; border-radius: 999px;
+        font-size: 14.5px; font-weight: 700; opacity: 0; pointer-events: none;
+        transition: opacity .2s ease, transform .2s ease; z-index: 50; max-width: 88vw; text-align: center;
+      }
+      .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+      @media (max-width: 880px) {
+        .layout { grid-template-columns: 1fr; }
+        .order { position: static; }
+        .steps { grid-template-columns: repeat(2, 1fr); }
+        .pay-cards { grid-template-columns: 1fr; }
+      }
+      @media (max-width: 420px) {
+        .grid { grid-template-columns: repeat(2, 1fr); }
+        .tiers-grid { grid-template-columns: 1fr; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * { transition: none !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+
+      <header class="hero">
+        <div class="hero-top">
+          <span class="brand-chip">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.9 4.6c.2-1-.6-1.9-1.6-1.7L2.7 9.3c-1 .3-1.2 1.6-.3 2.2l4.6 3 2.1 5.4c.3.8 1.4 1 2 .3l2.4-2.6 4.2 3c.8.6 1.9.1 2-.8l2.2-15.2ZM8.4 13.5l9.7-6.4c.2-.1.3.2.1.3l-8 7.6-.3 3-1.5-4.5Z"/></svg>
+            全球接码
+          </span>
+          <span class="hero-contact">店主电报：<a href="https://t.me/GT03888" target="_blank" rel="noopener">@GT03888</a></span>
+        </div>
+        <h1>各平台接码，下单秒发码</h1>
+        <p>先选要注册的平台，再选国家档位：价格从便宜到贵排，便宜的是普通账号，贵的是精养账号。选好后点下单，会先把订单复制好，再打开店主的电报私聊，粘贴发送就行，付款确认后马上发码。</p>
+        <div class="hero-tags">
+          <span class="tag refund">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            没收到码，全额退款
+          </span>
+          <span class="tag">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4.5 13.5H11L9.5 22 19 10h-6.5L13 2Z"/></svg>
+            秒到码
+          </span>
+          <span class="tag">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.6-3 7.7-7 9-4-1.3-7-4.4-7-9V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+            成功率高
+          </span>
+        </div>
+      </header>
+
+      <div class="steps" aria-label="下单流程">
+        <div class="step"><span class="step-num">1</span><div><b>选服务</b><span>点下面要注册的平台</span></div></div>
+        <div class="step"><span class="step-num">2</span><div><b>选国家档位</b><span>从便宜到贵，十档可选</span></div></div>
+        <div class="step"><span class="step-num">3</span><div><b>付款</b><span>USDT 付款；微信/支付宝请电报联系店主</span></div></div>
+        <div class="step"><span class="step-num">4</span><div><b>去电报下单</b><span>订单自动复制，粘贴发送，付款后发码</span></div></div>
+      </div>
+
+      <div class="layout">
+        <div>
+          <section aria-label="商品列表">
+            <div class="section-head">
+              <h2>选服务</h2>
+              <span class="price-note" id="priceNote">每个服务 10 个国家，按进价从便宜到贵排</span>
+            </div>
+            <div class="grid" id="grid"></div>
+          </section>
+
+          <section class="tiers-block" aria-label="国家档位">
+            <div class="section-head">
+              <h2>选国家档位</h2>
+              <span class="price-note" id="tierFor"></span>
+            </div>
+            <div class="tiers-grid" id="tierList"></div>
+            <p class="fx-note">全部价格按 1 USDT ≈ 7.2 元换算，十档对应人民币 ¥18–¥120，付款按 USDT 金额付。</p>
+            <a class="country-note" href="https://t.me/GT03888" target="_blank" rel="noopener">有指定的国家，请联系我的电报 @GT03888</a>
+          </section>
+        </div>
+
+        <aside class="order" aria-label="下单面板">
+          <h2>下单</h2>
+          <div class="sel-summary">
+            <span class="tile"><span class="letter" id="selLetter">T</span><img id="selIcon" alt="" onerror="this.style.display='none'" /></span>
+            <div>
+              <div class="sname" id="selName">—</div>
+              <div class="sprice" id="selPrice">—</div>
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="flabel" id="qtyLabel">数量</span>
+            <div class="qty-row" role="group" aria-labelledby="qtyLabel">
+              <button type="button" class="qty-btn" id="qtyMinus" aria-label="减少数量">−</button>
+              <span class="qty-val" id="qtyVal">1</span>
+              <button type="button" class="qty-btn" id="qtyPlus" aria-label="增加数量">+</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="flabel" id="payLabel">付款方式</span>
+            <div class="pay-grid single" role="radiogroup" aria-labelledby="payLabel" id="payGrid"></div>
+            <a class="pay-notice" href="https://t.me/GT03888" target="_blank" rel="noopener">如需使用微信或支付宝付款，请联系我的电报 @GT03888</a>
+          </div>
+
+          <div class="total-row">
+            <span class="tlabel">总价</span>
+            <span class="tval" id="totalVal">0.00 USDT</span>
+          </div>
+          <p class="fx-note">按 1 USDT ≈ 7.2 元换算</p>
+
+          <div class="preview" id="orderPreview" aria-label="订单内容预览"></div>
+
+          <a class="cta" id="ctaOrder" href="https://t.me/GT03888" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.9 4.6c.2-1-.6-1.9-1.6-1.7L2.7 9.3c-1 .3-1.2 1.6-.3 2.2l4.6 3 2.1 5.4c.3.8 1.4 1 2 .3l2.4-2.6 4.2 3c.8.6 1.9.1 2-.8l2.2-15.2ZM8.4 13.5l9.7-6.4c.2-.1.3.2.1.3l-8 7.6-.3 3-1.5-4.5Z"/></svg>
+            复制订单，去电报下单
+          </a>
+          <button type="button" class="cta-sub" id="btnCopy">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            只复制订单内容
+          </button>
+          <p class="order-hint">点上面按钮会先复制订单，再打开电报，在和店主的私聊里粘贴发送就行。</p>
+        </aside>
+      </div>
+
+      <section class="block" aria-label="付款说明">
+        <h2>付款说明</h2>
+        <a class="pay-banner" href="https://t.me/GT03888" target="_blank" rel="noopener">如需使用微信或支付宝付款，请联系我的电报 @GT03888</a>
+        <div class="pay-card">
+          <div class="pc-head">
+            <span class="ptile"><span class="letter">U</span><img src="https://cdn.simpleicons.org/tether" alt="" loading="lazy" onerror="this.style.display='none'" /></span>
+            <b>USDT 付款</b>
+          </div>
+          <p>线上只收 USDT，走 TRC20 网络，价格按 1 USDT ≈ 7.2 元换算。下单后把订单发给店主，按订单上的 USDT 金额转到下面这个收款地址，转好账把交易截图发过去，确认后马上发码。</p>
+          <div class="addr-box show" id="usdtBox">
+            <div style="font-size:13px;font-weight:700;margin-bottom:6px;">USDT 收款地址（TRC20）</div>
+            <div class="addr-val" id="usdtAddr">TPspmThQbEdiSWg5afkJB3NSi5g9ybPcAX</div>
+            <button type="button" class="addr-copy" id="btnCopyAddr">一键复制收款地址</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="block" aria-label="下单须知">
+        <h2>下单须知</h2>
+        <ul class="notes-list">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>没收到验证码，全额退款，不用担心白花钱。</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>普通账号是新号；精养账号是养了一到三年的老号，更稳、更不容易被封，价格也更高。</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>一个号码只能注册一个账号，下单前先想好要注册哪个平台。</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>付款后把付款截图发给店主，发码更快。</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>国家的便宜贵排序每天按进价更新；你下单时选的档位价格，就是最终要付的价格。</span></li>
+        </ul>
+      </section>
+
+      <details class="settings" id="settingsBox">
+        <summary>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.55-1 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34h.01a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55h.01a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87v.01a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1Z"/></svg>
+          商家设置（店主用）
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="settings-body">
+          <p class="settings-note">在这里改商品名、上架状态，或临时改 USDT 收款地址。页面默认收款地址是 TPspmThQbEdiSWg5afkJB3NSi5g9ybPcAX，在这里改只是临时换一下。价格是固定十档（2.50–16.67 USDT，按 1 USDT ≈ 7.2 元换算），国家按进价从便宜到贵自动排，不用手动改价。改动只在本次打开页面时有效，关掉页面会恢复默认。</p>
+          <div id="settingsList"></div>
+          <div class="set-add">
+            <input type="text" id="newName" placeholder="新商品名，如：Spotify" aria-label="新商品名" />
+            <button type="button" id="btnAdd">添加商品</button>
+          </div>
+          <div class="set-field">
+            <label for="usdtInput">USDT 收款地址（TRC20）— 默认地址已填好，在这里改只是临时换，刷新页面恢复默认</label>
+            <input type="text" id="usdtInput" placeholder="T 开头的 TRC20 地址" autocomplete="off" value="TPspmThQbEdiSWg5afkJB3NSi5g9ybPcAX" />
+          </div>
+          <div class="set-actions">
+            <button type="button" class="set-reset" id="btnReset">恢复默认商品</button>
+          </div>
+        </div>
+      </details>
+
+      <footer>
+        全球接码 · 有问题直接电报私聊店主 <a href="https://t.me/GT03888" target="_blank" rel="noopener">@GT03888</a>
+      </footer>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+"use strict";
+
+/* 固定十档卖价（USDT）：人民币 18/25/32/40/48/58/70/84/100/120 元
+按 1 USDT ≈ 7.2 元换算。按 5sim 实时进价从便宜到贵依次对应。
+第 1–4 档普通账号，5–6 档精养一年，7–8 档精养两年，9–10 档精养三年。 */
+var TIERS = [2.50, 3.47, 4.44, 5.56, 6.67, 8.06, 9.72, 11.67, 13.89, 16.67];
+function tierLabel(i) {
+if (i < 4) return "普通账号";
+if (i < 6) return "精养一年";
+if (i < 8) return "精养两年";
+return "精养三年";
+}
+
+/* 拉不到实时进价时的兜底名单（2026-11-15 的数据，已按便宜到贵排好） */
+var FALLBACK = {
+telegram: ["哥伦比亚", "东帝汶", "洪都拉斯", "斯里兰卡", "埃塞俄比亚", "安哥拉", "克罗地亚", "塞尔维亚", "匈牙利", "印度尼西亚"],
+whatsapp: ["东帝汶", "萨尔瓦多", "利比里亚", "不丹", "老挝", "哥斯达黎加", "多米尼加", "尼加拉瓜", "菲律宾", "刚果"],
+google: ["菲律宾", "印度尼西亚", "罗马尼亚", "埃塞俄比亚", "格鲁吉亚", "加拿大", "孟加拉国", "阿根廷", "肯尼亚", "波兰"],
+facebook: ["菲律宾", "埃及", "波兰", "印度尼西亚", "阿根廷", "牙买加", "马来西亚", "利比里亚", "摩洛哥", "柬埔寨"],
+instagram: ["格鲁吉亚", "印度尼西亚", "菲律宾", "阿根廷", "越南", "英国", "肯尼亚", "奥地利", "柬埔寨", "秘鲁"],
+openai: ["荷兰", "阿根廷", "格鲁吉亚", "印度尼西亚", "巴基斯坦", "英国", "波兰", "阿塞拜疆", "菲律宾", "阿富汗"],
+microsoft: ["利比里亚", "塞尔维亚", "菲律宾", "罗马尼亚", "泰国", "印度尼西亚", "洪都拉斯", "孟加拉国", "斯洛文尼亚", "荷兰"],
+discord: ["印度尼西亚", "肯尼亚", "荷兰", "英国", "克罗地亚", "阿根廷", "捷克", "罗马尼亚", "波兰", "菲律宾"],
+tiktok: ["印度尼西亚", "阿根廷", "罗马尼亚", "英国", "立陶宛", "荷兰", "芬兰", "菲律宾", "斯洛文尼亚", "洪都拉斯"],
+amazon: ["阿根廷", "捷克", "格鲁吉亚", "肯尼亚", "波兰", "越南", "印度尼西亚", "菲律宾", "柬埔寨", "荷兰"],
+apple: ["印度尼西亚", "英国", "意大利", "菲律宾", "阿根廷", "巴西", "肯尼亚", "卢森堡", "波兰", "赞比亚"],
+x: ["肯尼亚", "利比里亚", "越南", "美国", "加拿大", "德国", "印度尼西亚", "罗马尼亚", "芬兰", "英国"]
+};
+
+/* 5sim 国家英文名 → 中文名（实时排序时用；没有收录的显示英文原名） */
+var COUNTRY_ZH = {
+afghanistan: "阿富汗", albania: "阿尔巴尼亚", algeria: "阿尔及利亚", angola: "安哥拉",
+argentina: "阿根廷", armenia: "亚美尼亚", australia: "澳大利亚", austria: "奥地利",
+azerbaijan: "阿塞拜疆", bahrain: "巴林", bangladesh: "孟加拉国", belarus: "白俄罗斯",
+belgium: "比利时", bhutan: "不丹", bolivia: "玻利维亚", bosnia: "波黑",
+botswana: "博茨瓦纳", brazil: "巴西", bulgaria: "保加利亚", burkinafaso: "布基纳法索",
+cambodia: "柬埔寨", cameroon: "喀麦隆", canada: "加拿大", chad: "乍得",
+chile: "智利", colombia: "哥伦比亚", congo: "刚果", congobrazzaville: "刚果",
+congokinshasa: "刚果（金）", costarica: "哥斯达黎加", croatia: "克罗地亚", cuba: "古巴",
+cyprus: "塞浦路斯", czech: "捷克", czechia: "捷克", denmark: "丹麦",
+dominicana: "多米尼加", dominicanrepublic: "多米尼加", easttimor: "东帝汶", timorleste: "东帝汶",
+ecuador: "厄瓜多尔", egypt: "埃及", elsalvador: "萨尔瓦多", england: "英国",
+unitedkingdom: "英国", estonia: "爱沙尼亚", ethiopia: "埃塞俄比亚", finland: "芬兰",
+france: "法国", gabon: "加蓬", georgia: "格鲁吉亚", germany: "德国",
+ghana: "加纳", greece: "希腊", guatemala: "危地马拉", guinea: "几内亚",
+haiti: "海地", honduras: "洪都拉斯", hongkong: "中国香港", hungary: "匈牙利",
+iceland: "冰岛", india: "印度", indonesia: "印度尼西亚", iran: "伊朗",
+iraq: "伊拉克", ireland: "爱尔兰", israel: "以色列", italy: "意大利",
+ivorycoast: "科特迪瓦", cotedivoire: "科特迪瓦", jamaica: "牙买加", japan: "日本",
+jordan: "约旦", kazakhstan: "哈萨克斯坦", kenya: "肯尼亚", kuwait: "科威特",
+kyrgyzstan: "吉尔吉斯斯坦", laos: "老挝", latvia: "拉脱维亚", lebanon: "黎巴嫩",
+liberia: "利比里亚", libya: "利比亚", lithuania: "立陶宛", luxembourg: "卢森堡",
+macedonia: "北马其顿", madagascar: "马达加斯加", malaysia: "马来西亚", mali: "马里",
+mauritania: "毛里塔尼亚", mauritius: "毛里求斯", mexico: "墨西哥", moldova: "摩尔多瓦",
+mongolia: "蒙古", montenegro: "黑山", morocco: "摩洛哥", mozambique: "莫桑比克",
+myanmar: "缅甸", namibia: "纳米比亚", nepal: "尼泊尔", netherlands: "荷兰",
+newzealand: "新西兰", nicaragua: "尼加拉瓜", niger: "尼日尔", nigeria: "尼日利亚",
+norway: "挪威", oman: "阿曼", pakistan: "巴基斯坦", palestine: "巴勒斯坦",
+panama: "巴拿马", paraguay: "巴拉圭", peru: "秘鲁", philippines: "菲律宾",
+poland: "波兰", portugal: "葡萄牙", qatar: "卡塔尔", romania: "罗马尼亚",
+russia: "俄罗斯", rwanda: "卢旺达", saudiarabia: "沙特阿拉伯", senegal: "塞内加尔",
+serbia: "塞尔维亚", sierraleone: "塞拉利昂", singapore: "新加坡", slovakia: "斯洛伐克",
+slovenia: "斯洛文尼亚", somalia: "索马里", southafrica: "南非", southkorea: "韩国",
+korea: "韩国", spain: "西班牙", srilanka: "斯里兰卡", sudan: "苏丹",
+sweden: "瑞典", switzerland: "瑞士", syria: "叙利亚", taiwan: "中国台湾",
+tajikistan: "塔吉克斯坦", tanzania: "坦桑尼亚", thailand: "泰国", togo: "多哥",
+tunisia: "突尼斯", turkey: "土耳其", uganda: "乌干达", ukraine: "乌克兰",
+uae: "阿联酋", emirates: "阿联酋", uruguay: "乌拉圭", usa: "美国",
+unitedstates: "美国", uzbekistan: "乌兹别克斯坦", venezuela: "委内瑞拉", vietnam: "越南",
+yemen: "也门", zambia: "赞比亚", zimbabwe: "津巴布韦"
+};
+function countryName(key) {
+if (COUNTRY_ZH[key]) return COUNTRY_ZH[key];
+return key.charAt(0).toUpperCase() + key.slice(1);
+}
+
+var SERVICES = [
+{ id: "telegram", name: "电报", en: "Telegram", slug: "telegram", sim: "telegram"},
+{ id: "whatsapp", name: "WhatsApp", en: "WhatsApp", slug: "whatsapp", sim: "whatsapp"},
+{ id: "google", name: "Google", en: "Google / Gmail", slug: "google", sim: "google"},
+{ id: "facebook", name: "Facebook", en: "Facebook", slug: "facebook", sim: "facebook"},
+{ id: "instagram", name: "Instagram", en: "Instagram", slug: "instagram", sim: "instagram"},
+{ id: "openai", name: "OpenAI", en: "OpenAI / ChatGPT", slug: "openai", sim: "openai"},
+{ id: "microsoft", name: "微软", en: "Microsoft", slug: "microsoft", sim: "microsoft"},
+{ id: "discord", name: "Discord", en: "Discord", slug: "discord", sim: "discord"},
+{ id: "tiktok", name: "TikTok", en: "TikTok", slug: "tiktok", sim: "tiktok"},
+{ id: "amazon", name: "Amazon", en: "Amazon", slug: "amazon", sim: "amazon"},
+{ id: "apple", name: "Apple", en: "Apple ID", slug: "apple", sim: "apple"},
+{ id: "x", name: "X", en: "X（推特）", slug: "x", sim: "twitter"}
+];
+
+var PAY_METHODS = [
+{ id: "usdt", name: "USDT（TRC20）", slug: "tether", letter: "U"}
+];
+
+function freshProducts() {
+return SERVICES.map(function (s) {
+return {
+id: s.id, name: s.name, en: s.en, slug: s.slug, sim: s.sim,
+countries: (FALLBACK[s.id] || []).slice(),
+live: false, on: true
+};
+});
+}
+var products = freshProducts();
+
+var DEFAULT_USDT_ADDRESS = "TPspmThQbEdiSWg5afkJB3NSi5g9ybPcAX";
+var state = {
+selectedId: "telegram",
+tierIdx: 0,
+qty: 1,
+payId: "usdt",
+orderNo: makeOrderNo(),
+usdtAddress: DEFAULT_USDT_ADDRESS
+};
+
+var $ = function (id) { return document.getElementById(id);};
+var grid = $("grid"), tierList = $("tierList"), payGrid = $("payGrid");
+
+function fmtUsdt(v) { return (Math.round(v * 100) / 100).toFixed(2); }
+function iconUrl(slug) { return "https://cdn.simpleicons.org/" + slug;}
+function letterOf(p) { return (p.en || p.name || "?").charAt(0).toUpperCase();}
+function selected() {
+for (var i = 0; i < products.length; i++) if (products[i].id === state.selectedId) return products[i];
+return products[0];
+}
+function unitPrice() {
+var p = selected();
+if (!p ||!p.countries.length) return null;
+var i = Math.min(state.tierIdx, p.countries.length - 1);
+return TIERS[i];
+}
+function payName() {
+for (var i = 0; i < PAY_METHODS.length; i++) if (PAY_METHODS[i].id === state.payId) return PAY_METHODS[i].name;
+return "";
+}
+function makeOrderNo() {
+var d = new Date();
+function pad(n) { return (n < 10? "0": "") + n;}
+return "JM" + d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + "-" + Math.floor(1000 + Math.random() * 9000);
+}
+
+/* ---------- 商品网格 ---------- */
+function renderGrid() {
+grid.innerHTML = "";
+products.forEach(function (p) {
+if (!p.on) return;
+var btn = document.createElement("button");
+btn.type = "button";
+btn.className = "card" + (p.id === state.selectedId? " selected": "");
+btn.setAttribute("aria-pressed", p.id === state.selectedId? "true": "false");
+var check = document.createElement("span");
+check.className = "check";
+check.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+btn.appendChild(check);
+var tile = document.createElement("span");
+tile.className = "tile";
+var letter = document.createElement("span");
+letter.className = "letter";
+letter.textContent = letterOf(p);
+tile.appendChild(letter);
+if (p.slug) {
+var img = document.createElement("img");
+img.src = iconUrl(p.slug);
+img.alt = "";
+img.loading = "lazy";
+img.onerror = function () { this.style.display = "none";};
+tile.appendChild(img);
+}
+btn.appendChild(tile);
+var nm = document.createElement("div");
+nm.className = "pname"; nm.textContent = p.name;
+btn.appendChild(nm);
+var en = document.createElement("div");
+en.className = "pen"; en.textContent = p.en || "";
+btn.appendChild(en);
+var row = document.createElement("div");
+row.className = "prow";
+var pr = document.createElement("span");
+pr.className = "price"; pr.textContent = fmtUsdt(TIERS[0]);
+var per = document.createElement("span");
+per.className = "per"; per.textContent = "USDT 起 · " + p.countries.length + " 国可选";
+row.appendChild(pr); row.appendChild(per);
+btn.appendChild(row);
+btn.addEventListener("click", function () {
+state.selectedId = p.id;
+state.tierIdx = 0;
+renderGrid(); renderTiers(); renderOrder();
+});
+grid.appendChild(btn);
+});
+}
+
+/* ---------- 国家档位 ---------- */
+function renderTiers() {
+var p = selected();
+tierList.innerHTML = "";
+if (!p) { $("tierFor").textContent = ""; return;}
+$("tierFor").textContent = "当前服务：" + p.name + (p.live? "（实时进价排序）": "");
+if (!p.countries.length) {
+var empty = document.createElement("div");
+empty.className = "tiers-empty";
+empty.textContent = "这个商品的国家和价格，下单时私聊店主确认。";
+tierList.appendChild(empty);
+return;
+}
+p.countries.forEach(function (country, i) {
+var b = document.createElement("button");
+b.type = "button";
+b.className = "tier" + (i === state.tierIdx? " selected": "");
+b.setAttribute("aria-pressed", i === state.tierIdx? "true": "false");
+var rank = document.createElement("span");
+rank.className = "tier-rank"; rank.textContent = i + 1;
+b.appendChild(rank);
+var main = document.createElement("span");
+main.className = "tier-main";
+var cn = document.createElement("span");
+cn.className = "tier-country"; cn.textContent = country;
+main.appendChild(cn);
+var badge = document.createElement("span");
+badge.className = "tier-badge" + (i >= 4? " premium": "");
+badge.textContent = tierLabel(i);
+main.appendChild(badge);
+b.appendChild(main);
+var price = document.createElement("span");
+price.className = "tier-price"; price.textContent = fmtUsdt(TIERS[i]) + " USDT";
+b.appendChild(price);
+b.addEventListener("click", function () {
+state.tierIdx = i;
+renderTiers(); renderOrder();
+});
+tierList.appendChild(b);
+});
+}
+
+/* ---------- 付款方式 ---------- */
+function renderPay() {
+payGrid.innerHTML = "";
+PAY_METHODS.forEach(function (m) {
+var b = document.createElement("button");
+b.type = "button";
+b.className = "pay-opt" + (m.id === state.payId? " selected": "");
+b.setAttribute("role", "radio");
+b.setAttribute("aria-checked", m.id === state.payId? "true": "false");
+var t = document.createElement("span");
+t.className = "ptile";
+var l = document.createElement("span");
+l.className = "letter"; l.textContent = m.letter;
+t.appendChild(l);
+var img = document.createElement("img");
+img.src = iconUrl(m.slug); img.alt = ""; img.loading = "lazy";
+img.onerror = function () { this.style.display = "none";};
+t.appendChild(img);
+b.appendChild(t);
+var n = document.createElement("span");
+n.className = "pname2"; n.textContent = m.name;
+b.appendChild(n);
+b.addEventListener("click", function () {
+state.payId = m.id;
+renderPay(); renderOrder();
+});
+payGrid.appendChild(b);
+});
+}
+
+/* ---------- 订单面板 ---------- */
+function orderText() {
+var p = selected();
+var price = unitPrice();
+var lines = [""];
+lines.push("服务：" + p.name + (p.en && p.en!== p.name? "（" + p.en + "）": ""));
+if (price!== null) {
+var idx = Math.min(state.tierIdx, p.countries.length - 1);
+lines.push("国家：" + p.countries[idx]);
+lines.push("档位：" + tierLabel(idx));
+lines.push("单价：" + fmtUsdt(price) + " USDT");
+lines.push("数量：" + state.qty);
+lines.push("总价：" + fmtUsdt(price * state.qty) + " USDT");
+} else {
+lines.push("数量：" + state.qty);
+lines.push("价格：私聊店主确认");
+}
+lines.push("付款方式：" + payName());
+lines.push("订单号：" + state.orderNo);
+return lines.join("\n");
+}
+function renderOrder() {
+var p = selected();
+if (!p) return;
+$("selLetter").textContent = letterOf(p);
+var icon = $("selIcon");
+if (p.slug) {
+icon.style.display = "";
+icon.src = iconUrl(p.slug);
+} else {
+icon.style.display = "none";
+}
+var price = unitPrice();
+if (price!== null) {
+var idx = Math.min(state.tierIdx, p.countries.length - 1);
+$("selName").textContent = p.name + " · " + p.countries[idx];
+$("selPrice").textContent = fmtUsdt(price) + " USDT · " + tierLabel(idx);
+$("totalVal").textContent = fmtUsdt(price * state.qty) + " USDT";
+} else {
+$("selName").textContent = p.name;
+$("selPrice").textContent = "价格私聊确认";
+$("totalVal").textContent = "—";
+}
+$("qtyVal").textContent = state.qty;
+$("orderPreview").textContent = orderText();
+}
+
+/* ---------- 复制 ---------- */
+var toastTimer = null;
+function toast(msg) {
+var t = $("toast");
+t.textContent = msg;
+t.classList.add("show");
+clearTimeout(toastTimer);
+toastTimer = setTimeout(function () { t.classList.remove("show");}, 2400);
+}
+function copyText(text, okMsg) {
+function done() { toast(okMsg);}
+function fallback() {
+var ta = document.createElement("textarea");
+ta.value = text;
+ta.style.position = "fixed"; ta.style.opacity = "0";
+document.body.appendChild(ta);
+ta.select();
+try { document.execCommand("copy"); done();}
+catch (e) { toast("复制失败，请长按订单内容手动复制");}
+document.body.removeChild(ta);
+}
+if (navigator.clipboard && navigator.clipboard.writeText) {
+navigator.clipboard.writeText(text).then(done, fallback);
+} else { fallback();}
+}
+
+$("ctaOrder").addEventListener("click", function () {
+copyText(orderText(), "订单已复制，去电报粘贴发送就行");
+});
+$("btnCopy").addEventListener("click", function () {
+copyText(orderText(), "订单内容已复制");
+});
+$("btnCopyAddr").addEventListener("click", function () {
+if (state.usdtAddress) copyText(state.usdtAddress, "USDT 收款地址已复制");
+});
+$("qtyMinus").addEventListener("click", function () {
+if (state.qty > 1) { state.qty--; renderOrder();}
+});
+$("qtyPlus").addEventListener("click", function () {
+if (state.qty < 99) { state.qty++; renderOrder();}
+});
+
+/* ---------- 商家设置 ---------- */
+function renderSettings() {
+var box = $("settingsList");
+box.innerHTML = "";
+products.forEach(function (p) {
+var row = document.createElement("div");
+row.className = "set-row";
+var nameIn = document.createElement("input");
+nameIn.type = "text"; nameIn.value = p.name;
+nameIn.setAttribute("aria-label", "商品名");
+nameIn.addEventListener("input", function () {
+p.name = this.value;
+renderGrid(); renderTiers(); renderOrder();
+});
+var tog = document.createElement("label");
+tog.className = "set-toggle";
+var cb = document.createElement("input");
+cb.type = "checkbox"; cb.checked = p.on;
+cb.addEventListener("change", function () {
+p.on = this.checked;
+if (!p.on && state.selectedId === p.id) {
+var first = products.filter(function (x) { return x.on;})[0];
+if (first) { state.selectedId = first.id; state.tierIdx = 0;}
+}
+renderGrid(); renderTiers(); renderOrder();
+});
+tog.appendChild(cb);
+tog.appendChild(document.createTextNode("上架"));
+var del = document.createElement("button");
+del.type = "button"; del.className = "set-del"; del.textContent = "✕";
+del.setAttribute("aria-label", "删除 " + p.name);
+del.addEventListener("click", function () {
+products = products.filter(function (x) { return x.id!== p.id;});
+if (state.selectedId === p.id && products.length) {
+var first = products.filter(function (x) { return x.on;})[0] || products[0];
+state.selectedId = first.id; state.tierIdx = 0;
+}
+renderGrid(); renderSettings(); renderTiers(); renderOrder();
+});
+row.appendChild(nameIn); row.appendChild(tog); row.appendChild(del);
+box.appendChild(row);
+});
+}
+
+$("btnAdd").addEventListener("click", function () {
+var name = $("newName").value.trim();
+if (!name) { toast("先填新商品的名字"); return;}
+products.push({
+id: "custom-" + Date.now(),
+name: name, en: name, slug: "", sim: "",
+countries: [], live: false, on: true
+});
+$("newName").value = "";
+renderGrid(); renderSettings();
+toast("已添加商品：" + name);
+});
+
+$("usdtInput").addEventListener("input", function () {
+state.usdtAddress = this.value.trim() || DEFAULT_USDT_ADDRESS;
+var box = $("usdtBox");
+$("usdtAddr").textContent = state.usdtAddress;
+box.classList.add("show");
+});
+
+$("btnReset").addEventListener("click", function () {
+products = freshProducts();
+state.selectedId = "telegram";
+state.tierIdx = 0;
+state.usdtAddress = DEFAULT_USDT_ADDRESS;
+$("usdtInput").value = DEFAULT_USDT_ADDRESS;
+$("usdtAddr").textContent = DEFAULT_USDT_ADDRESS;
+$("usdtBox").classList.add("show");
+renderGrid(); renderSettings(); renderTiers(); renderOrder();
+toast("已恢复默认商品和收款地址");
+refreshPrices();
+});
+
+/* ---------- 实时进价排序：5sim 游客接口 ----------
+每个服务取有货国家里进价最便宜的 10 个，从便宜到贵排，
+依次对应十档卖价。拉不到就保留兜底名单。 */
+function fetchTierCountries(sim) {
+return new Promise(function (resolve) {
+var url = "https://5sim.net/v1/guest/prices?product=" + encodeURIComponent(sim);
+var ctrl = ("AbortController" in window)? new AbortController(): null;
+var timer = ctrl? setTimeout(function () { ctrl.abort();}, 6000): null;
+fetch(url, ctrl? { signal: ctrl.signal}: {})
+.then(function (res) {
+if (timer) clearTimeout(timer);
+if (!res.ok) throw new Error("http " + res.status);
+return res.json();
+})
+.then(function (data) {
+var byCountry = data && data[sim];
+if (!byCountry) throw new Error("no product");
+var rows = [];
+Object.keys(byCountry).forEach(function (key) {
+var it = byCountry[key];
+if (it && typeof it.cost === "number" && it.cost > 0 && it.count > 0) {
+rows.push({ key: key, cost: it.cost});
+}
+});
+if (!rows.length) throw new Error("no stock");
+rows.sort(function (a, b) { return a.cost - b.cost;});
+resolve(rows.slice(0, 10).map(function (r) { return countryName(r.key);}));
+})
+.catch(function () { resolve(null);});
+});
+}
+
+function refreshPrices() {
+var liveCount = 0;
+var jobs = products.map(function (p) {
+if (!p.sim) return Promise.resolve();
+return fetchTierCountries(p.sim).then(function (names) {
+if (!names ||!names.length) return;
+p.countries = names;
+p.live = true;
+liveCount++;
+renderGrid();
+if (p.id === state.selectedId) { renderTiers(); renderOrder();}
+});
+});
+Promise.all(jobs).then(function () {
+if (liveCount > 0) {
+var d = new Date();
+function pad(n) { return (n < 10? "0": "") + n;}
+$("priceNote").innerHTML = '<span class="dot"></span>国家已按今日实时进价从便宜到贵排 · ' + pad(d.getHours()) + ":" + pad(d.getMinutes());
+}
+});
+}
+
+/* ---------- 初始化 ---------- */
+$("usdtAddr").textContent = state.usdtAddress;
+$("usdtBox").classList.add("show");
+if ($("usdtInput")) $("usdtInput").value = state.usdtAddress;
+renderGrid();
+renderTiers();
+renderPay();
+renderOrder();
+renderSettings();
+refreshPrices();
+})();
+</script>
+</body>
+</html>
