@@ -334,7 +334,7 @@
           <span class="hero-contact">店主电报：<a href="https://t.me/GT03888" target="_blank" rel="noopener">@GT03888</a></span>
         </div>
         <h1>各平台接码，下单秒发码</h1>
-        <p>先选要注册的平台，再选国家档位：价格从便宜到贵排，便宜的是普通账号，贵的是精养账号。选好后点下单，会先把订单复制好，再打开店主的电报私聊，粘贴发送就行，付款确认后马上发码。</p>
+        <p>先选要注册的平台，再选国家档位：价格从便宜到贵排，便宜的是特价账号，贵的是精养账号。选好后点下单，会先把订单复制好，再打开店主的电报私聊，粘贴发送就行，付款确认后马上发码。</p>
         <div class="hero-tags">
           <span class="tag refund">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
@@ -445,7 +445,7 @@
         <h2>下单须知</h2>
         <ul class="notes-list">
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>没收到验证码，全额退款，不用担心白花钱。</span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>普通账号是新号；精养账号是养了一到三年的老号，更稳、更不容易被封，价格也更高。</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>特价账号是新号；精养账号是养了一到三年的老号，更稳、更不容易被封，价格也更高。</span></li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>一个号码只能注册一个账号，下单前先想好要注册哪个平台。</span></li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>付款后把付款截图发给店主，发码更快。</span></li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>国家的便宜贵排序每天按进价更新；你下单时选的档位价格，就是最终要付的价格。</span></li>
@@ -488,10 +488,10 @@
 
 /* 固定二十档卖价（USDT）：人民币 18/22/26/30/35/40/45/50/55/60/66/72/78/84/90/96/103/110/115/120 元
 按 1 USDT ≈ 7.2 元换算。按 5sim 实时进价从便宜到贵依次对应。
-第 1–5 档普通账号，6–10 档精养一年，11–15 档精养两年，16–20 档精养三年。 */
+第 1–5 档特价账号，6–10 档精养一年，11–15 档精养两年，16–20 档精养三年。 */
 var TIERS = [2.50, 3.06, 3.61, 4.17, 4.86, 5.56, 6.25, 6.94, 7.64, 8.33, 9.17, 10.00, 10.83, 11.67, 12.50, 13.33, 14.31, 15.28, 15.97, 16.67];
 function tierLabel(i) {
-if (i < 5) return "普通账号";
+if (i < 5) return "特价账号";
 if (i < 10) return "精养一年";
 if (i < 15) return "精养两年";
 return "精养三年";
