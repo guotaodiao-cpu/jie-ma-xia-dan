@@ -1032,6 +1032,12 @@ out.push({ p: p, key: key, price: tierPrice(cost) });
 out.sort(function (a, b) { return a.price - b.price; });
 box.innerHTML = "";
 if (!out.length) {
+var appMatched = products.some(function (p) {
+if (!p.on) return false;
+var lq = q.toLowerCase();
+return (p.name || "").toLowerCase().indexOf(lq) >= 0 || (p.en || "").toLowerCase().indexOf(lq) >= 0;
+});
+if (appMatched) { box.hidden = true; return; }
 var empty = document.createElement("div");
 empty.className = "cresult-empty";
 empty.textContent = "没找到\u201c" + q + "\u201d，换个关键词试试，或直接电报联系店主。";
