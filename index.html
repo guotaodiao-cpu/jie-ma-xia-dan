@@ -147,6 +147,8 @@
       .tier.selected .tier-rank { background: var(--accent); color: #fff; }
       .tier-main { flex: 1; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-width: 0; }
       .tier-country { font-weight: 700; font-size: 15px; }
+      .tier-flag { width: 22px; height: 16px; border-radius: 3px; object-fit: cover; flex: none; box-shadow: 0 0 0 1px rgba(21, 34, 45, .14); }
+      .tier-dial { color: var(--muted); font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
       .tier-badge {
         font-size: 11.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px;
         background: var(--surface-2); color: var(--muted); white-space: nowrap;
@@ -360,7 +362,7 @@
           <section aria-label="商品列表">
             <div class="section-head">
               <h2>选服务</h2>
-              <span class="price-note" id="priceNote">每个服务 10 个国家，按进价从便宜到贵排</span>
+              <span class="price-note" id="priceNote">每个服务最多 10 个国家，按进价从便宜到贵排</span>
             </div>
             <div class="grid" id="grid"></div>
           </section>
@@ -496,18 +498,33 @@ return "精养三年";
 
 /* 拉不到实时进价时的兜底名单（2026-11-15 的数据，已按便宜到贵排好） */
 var FALLBACK = {
-telegram: ["哥伦比亚", "东帝汶", "洪都拉斯", "斯里兰卡", "埃塞俄比亚", "安哥拉", "克罗地亚", "塞尔维亚", "匈牙利", "印度尼西亚"],
-whatsapp: ["东帝汶", "萨尔瓦多", "利比里亚", "不丹", "老挝", "哥斯达黎加", "多米尼加", "尼加拉瓜", "菲律宾", "刚果"],
-google: ["菲律宾", "印度尼西亚", "罗马尼亚", "埃塞俄比亚", "格鲁吉亚", "加拿大", "孟加拉国", "阿根廷", "肯尼亚", "波兰"],
-facebook: ["菲律宾", "埃及", "波兰", "印度尼西亚", "阿根廷", "牙买加", "马来西亚", "利比里亚", "摩洛哥", "柬埔寨"],
-instagram: ["格鲁吉亚", "印度尼西亚", "菲律宾", "阿根廷", "越南", "英国", "肯尼亚", "奥地利", "柬埔寨", "秘鲁"],
-openai: ["荷兰", "阿根廷", "格鲁吉亚", "印度尼西亚", "巴基斯坦", "英国", "波兰", "阿塞拜疆", "菲律宾", "阿富汗"],
-microsoft: ["利比里亚", "塞尔维亚", "菲律宾", "罗马尼亚", "泰国", "印度尼西亚", "洪都拉斯", "孟加拉国", "斯洛文尼亚", "荷兰"],
-discord: ["印度尼西亚", "肯尼亚", "荷兰", "英国", "克罗地亚", "阿根廷", "捷克", "罗马尼亚", "波兰", "菲律宾"],
-tiktok: ["印度尼西亚", "阿根廷", "罗马尼亚", "英国", "立陶宛", "荷兰", "芬兰", "菲律宾", "斯洛文尼亚", "洪都拉斯"],
-amazon: ["阿根廷", "捷克", "格鲁吉亚", "肯尼亚", "波兰", "越南", "印度尼西亚", "菲律宾", "柬埔寨", "荷兰"],
-apple: ["印度尼西亚", "英国", "意大利", "菲律宾", "阿根廷", "巴西", "肯尼亚", "卢森堡", "波兰", "赞比亚"],
-x: ["肯尼亚", "利比里亚", "越南", "美国", "加拿大", "德国", "印度尼西亚", "罗马尼亚", "芬兰", "英国"]
+telegram: ["colombia", "easttimor", "honduras", "srilanka", "ethiopia", "angola", "croatia", "serbia", "hungary", "indonesia"],
+whatsapp: ["easttimor", "elsalvador", "liberia", "bhutan", "laos", "costarica", "dominicana", "nicaragua", "philippines", "congo"],
+google: ["philippines", "indonesia", "romania", "ethiopia", "georgia", "canada", "bangladesh", "argentina", "kenya", "poland"],
+facebook: ["philippines", "egypt", "poland", "indonesia", "argentina", "jamaica", "malaysia", "liberia", "morocco", "cambodia"],
+instagram: ["georgia", "indonesia", "philippines", "argentina", "vietnam", "england", "kenya", "austria", "cambodia", "peru"],
+openai: ["netherlands", "argentina", "georgia", "indonesia", "pakistan", "england", "poland", "azerbaijan", "philippines", "afghanistan"],
+microsoft: ["liberia", "serbia", "philippines", "romania", "thailand", "indonesia", "honduras", "bangladesh", "slovenia", "netherlands"],
+discord: ["indonesia", "kenya", "netherlands", "england", "croatia", "argentina", "czech", "romania", "poland", "philippines"],
+tiktok: ["indonesia", "argentina", "romania", "england", "lithuania", "netherlands", "finland", "philippines", "slovenia", "honduras"],
+amazon: ["argentina", "czech", "georgia", "kenya", "poland", "vietnam", "indonesia", "philippines", "cambodia", "netherlands"],
+apple: ["indonesia", "england", "italy", "philippines", "argentina", "brazil", "kenya", "luxembourg", "poland", "zambia"],
+x: ["kenya", "liberia", "vietnam", "usa", "canada", "germany", "indonesia", "romania", "finland", "england"],
+wechat: ["philippines", "england", "brazil", "indonesia", "spain", "kenya", "luxembourg", "canada", "sweden", "croatia"],
+qq: ["england", "netherlands", "indonesia", "poland", "canada", "usa", "israel", "brazil", "georgia", "spain"],
+toutiao: ["england", "indonesia", "malaysia", "vietnam", "usa", "hongkong"],
+momo: ["brazil", "england", "honduras", "indonesia", "vietnam", "argentina", "usa", "sweden", "australia"],
+tantan: ["poland", "kenya", "israel", "argentina", "brazil", "england", "montenegro", "netherlands", "italy", "philippines"],
+soul: ["england", "argentina", "austria", "czech", "georgia", "indonesia", "kazakhstan", "netherlands", "philippines", "poland"],
+weibo: ["germany", "england", "indonesia", "denmark", "netherlands", "philippines", "argentina", "georgia", "poland", "austria"],
+bilibili: ["england", "israel", "denmark", "indonesia", "canada", "poland", "philippines", "usa", "hongkong", "netherlands"],
+baidu: ["indonesia", "austria", "philippines", "netherlands", "argentina", "spain", "poland", "georgia", "serbia", "brazil"],
+taobao: ["denmark", "england", "netherlands", "israel", "argentina", "brazil", "montenegro", "usa", "canada", "indonesia"],
+xianyu: ["england", "hongkong"],
+pinduoduo: ["england", "netherlands", "poland", "indonesia", "kazakhstan", "canada", "hongkong", "usa"],
+alipay: ["indonesia", "poland", "canada", "colombia", "netherlands", "argentina", "philippines", "denmark", "england", "kenya"],
+dingtalk: ["england", "israel", "philippines", "canada", "usa", "hongkong"],
+zhihu: ["usa", "england", "italy", "netherlands", "portugal", "argentina", "austria", "australia", "poland", "hongkong"]
 };
 
 /* 5sim 国家英文名 → 中文名（实时排序时用；没有收录的显示英文原名） */
@@ -556,6 +573,166 @@ function countryName(key) {
 if (COUNTRY_ZH[key]) return COUNTRY_ZH[key];
 return key.charAt(0).toUpperCase() + key.slice(1);
 }
+/* 5sim 国家英文 key -> [国旗代码(flagcdn), 国际区号] */
+var COUNTRY_META = {
+afghanistan: ["af", "+93"],
+albania: ["al", "+355"],
+algeria: ["dz", "+213"],
+angola: ["ao", "+244"],
+argentina: ["ar", "+54"],
+armenia: ["am", "+374"],
+australia: ["au", "+61"],
+austria: ["at", "+43"],
+azerbaijan: ["az", "+994"],
+bahrain: ["bh", "+973"],
+bangladesh: ["bd", "+880"],
+belarus: ["by", "+375"],
+belgium: ["be", "+32"],
+bhutan: ["bt", "+975"],
+bolivia: ["bo", "+591"],
+bosnia: ["ba", "+387"],
+botswana: ["bw", "+267"],
+brazil: ["br", "+55"],
+bulgaria: ["bg", "+359"],
+burkinafaso: ["bf", "+226"],
+cambodia: ["kh", "+855"],
+cameroon: ["cm", "+237"],
+canada: ["ca", "+1"],
+chad: ["td", "+235"],
+chile: ["cl", "+56"],
+colombia: ["co", "+57"],
+congo: ["cg", "+242"],
+congobrazzaville: ["cg", "+242"],
+congokinshasa: ["cd", "+243"],
+costarica: ["cr", "+506"],
+cotedivoire: ["ci", "+225"],
+croatia: ["hr", "+385"],
+cuba: ["cu", "+53"],
+cyprus: ["cy", "+357"],
+czech: ["cz", "+420"],
+czechia: ["cz", "+420"],
+denmark: ["dk", "+45"],
+dominicana: ["do", "+1"],
+dominicanrepublic: ["do", "+1"],
+easttimor: ["tl", "+670"],
+ecuador: ["ec", "+593"],
+egypt: ["eg", "+20"],
+elsalvador: ["sv", "+503"],
+emirates: ["ae", "+971"],
+england: ["gb", "+44"],
+estonia: ["ee", "+372"],
+ethiopia: ["et", "+251"],
+finland: ["fi", "+358"],
+france: ["fr", "+33"],
+gabon: ["ga", "+241"],
+georgia: ["ge", "+995"],
+germany: ["de", "+49"],
+ghana: ["gh", "+233"],
+greece: ["gr", "+30"],
+guatemala: ["gt", "+502"],
+guinea: ["gn", "+224"],
+haiti: ["ht", "+509"],
+honduras: ["hn", "+504"],
+hongkong: ["hk", "+852"],
+hungary: ["hu", "+36"],
+iceland: ["is", "+354"],
+india: ["in", "+91"],
+indonesia: ["id", "+62"],
+iran: ["ir", "+98"],
+iraq: ["iq", "+964"],
+ireland: ["ie", "+353"],
+israel: ["il", "+972"],
+italy: ["it", "+39"],
+ivorycoast: ["ci", "+225"],
+jamaica: ["jm", "+1"],
+japan: ["jp", "+81"],
+jordan: ["jo", "+962"],
+kazakhstan: ["kz", "+7"],
+kenya: ["ke", "+254"],
+korea: ["kr", "+82"],
+kuwait: ["kw", "+965"],
+kyrgyzstan: ["kg", "+996"],
+laos: ["la", "+856"],
+latvia: ["lv", "+371"],
+lebanon: ["lb", "+961"],
+liberia: ["lr", "+231"],
+libya: ["ly", "+218"],
+lithuania: ["lt", "+370"],
+luxembourg: ["lu", "+352"],
+macedonia: ["mk", "+389"],
+madagascar: ["mg", "+261"],
+malaysia: ["my", "+60"],
+mali: ["ml", "+223"],
+mauritania: ["mr", "+222"],
+mauritius: ["mu", "+230"],
+mexico: ["mx", "+52"],
+moldova: ["md", "+373"],
+mongolia: ["mn", "+976"],
+montenegro: ["me", "+382"],
+morocco: ["ma", "+212"],
+mozambique: ["mz", "+258"],
+myanmar: ["mm", "+95"],
+namibia: ["na", "+264"],
+nepal: ["np", "+977"],
+netherlands: ["nl", "+31"],
+newzealand: ["nz", "+64"],
+nicaragua: ["ni", "+505"],
+niger: ["ne", "+227"],
+nigeria: ["ng", "+234"],
+norway: ["no", "+47"],
+oman: ["om", "+968"],
+pakistan: ["pk", "+92"],
+palestine: ["ps", "+970"],
+panama: ["pa", "+507"],
+paraguay: ["py", "+595"],
+peru: ["pe", "+51"],
+philippines: ["ph", "+63"],
+poland: ["pl", "+48"],
+portugal: ["pt", "+351"],
+qatar: ["qa", "+974"],
+romania: ["ro", "+40"],
+russia: ["ru", "+7"],
+rwanda: ["rw", "+250"],
+saudiarabia: ["sa", "+966"],
+senegal: ["sn", "+221"],
+serbia: ["rs", "+381"],
+sierraleone: ["sl", "+232"],
+singapore: ["sg", "+65"],
+slovakia: ["sk", "+421"],
+slovenia: ["si", "+386"],
+somalia: ["so", "+252"],
+southafrica: ["za", "+27"],
+southkorea: ["kr", "+82"],
+spain: ["es", "+34"],
+srilanka: ["lk", "+94"],
+sudan: ["sd", "+249"],
+sweden: ["se", "+46"],
+switzerland: ["ch", "+41"],
+syria: ["sy", "+963"],
+taiwan: ["tw", "+886"],
+tajikistan: ["tj", "+992"],
+tanzania: ["tz", "+255"],
+thailand: ["th", "+66"],
+timorleste: ["tl", "+670"],
+togo: ["tg", "+228"],
+tunisia: ["tn", "+216"],
+turkey: ["tr", "+90"],
+uae: ["ae", "+971"],
+uganda: ["ug", "+256"],
+ukraine: ["ua", "+380"],
+unitedkingdom: ["gb", "+44"],
+unitedstates: ["us", "+1"],
+uruguay: ["uy", "+598"],
+usa: ["us", "+1"],
+uzbekistan: ["uz", "+998"],
+venezuela: ["ve", "+58"],
+vietnam: ["vn", "+84"],
+yemen: ["ye", "+967"],
+zambia: ["zm", "+260"],
+zimbabwe: ["zw", "+263"],
+};
+function flagUrl(key) { var m = COUNTRY_META[key]; return m ? "https://flagcdn.com/w40/" + m[0] + ".png" : ""; }
+function dialCode(key) { var m = COUNTRY_META[key]; return m ? m[1] : ""; }
 
 var SERVICES = [
 { id: "telegram", name: "电报", en: "Telegram", slug: "telegram", sim: "telegram"},
@@ -569,7 +746,22 @@ var SERVICES = [
 { id: "tiktok", name: "TikTok", en: "TikTok", slug: "tiktok", sim: "tiktok"},
 { id: "amazon", name: "Amazon", en: "Amazon", slug: "amazon", sim: "amazon"},
 { id: "apple", name: "Apple", en: "Apple ID", slug: "apple", sim: "apple"},
-{ id: "x", name: "X", en: "X（推特）", slug: "x", sim: "twitter"}
+{ id: "x", name: "X", en: "X（推特）", slug: "x", sim: "twitter"},
+{ id: "wechat", name: "微信", en: "WeChat", slug: "wechat", sim: "wechat"},
+{ id: "qq", name: "QQ", en: "QQ", slug: "", sim: "tencentqq", icon: "https://www.google.com/s2/favicons?domain=qq.com&sz=128"},
+{ id: "toutiao", name: "今日头条", en: "今日头条", slug: "", sim: "toutiao", icon: "https://www.google.com/s2/favicons?domain=toutiao.com&sz=128"},
+{ id: "momo", name: "陌陌", en: "Momo", slug: "", sim: "momo", icon: "https://www.google.com/s2/favicons?domain=immomo.com&sz=128"},
+{ id: "tantan", name: "探探", en: "Tantan", slug: "", sim: "tantan", icon: "https://www.google.com/s2/favicons?domain=tantan.com&sz=128"},
+{ id: "soul", name: "Soul", en: "Soul", slug: "", sim: "soulapp", icon: "https://www.google.com/s2/favicons?domain=soulapp.cn&sz=128"},
+{ id: "weibo", name: "微博", en: "Weibo", slug: "sinaweibo", sim: "weibo"},
+{ id: "bilibili", name: "哔哩哔哩", en: "哔哩哔哩", slug: "bilibili", sim: "bilibili"},
+{ id: "baidu", name: "百度", en: "Baidu", slug: "baidu", sim: "baidu"},
+{ id: "taobao", name: "淘宝", en: "Taobao", slug: "taobao", sim: "taobao"},
+{ id: "xianyu", name: "闲鱼", en: "闲鱼", slug: "", sim: "xianyu", icon: "https://www.google.com/s2/favicons?domain=goofish.com&sz=128"},
+{ id: "pinduoduo", name: "拼多多", en: "拼多多", slug: "", sim: "pinduoduo", icon: "https://www.google.com/s2/favicons?domain=pinduoduo.com&sz=128"},
+{ id: "alipay", name: "支付宝", en: "Alipay", slug: "alipay", sim: "alipay"},
+{ id: "dingtalk", name: "钉钉", en: "DingTalk", slug: "", sim: "dingtalk", icon: "https://www.google.com/s2/favicons?domain=dingtalk.com&sz=128"},
+{ id: "zhihu", name: "知乎", en: "Zhihu", slug: "zhihu", sim: "zhihu"}
 ];
 
 var PAY_METHODS = [
@@ -579,7 +771,7 @@ var PAY_METHODS = [
 function freshProducts() {
 return SERVICES.map(function (s) {
 return {
-id: s.id, name: s.name, en: s.en, slug: s.slug, sim: s.sim,
+id: s.id, name: s.name, en: s.en, slug: s.slug, sim: s.sim, icon: s.icon,
 countries: (FALLBACK[s.id] || []).slice(),
 live: false, on: true
 };
@@ -602,6 +794,7 @@ var grid = $("grid"), tierList = $("tierList"), payGrid = $("payGrid");
 
 function fmtUsdt(v) { return (Math.round(v * 100) / 100).toFixed(2); }
 function iconUrl(slug) { return "https://cdn.simpleicons.org/" + slug;}
+function iconSrc(p) { return p.icon || (p.slug ? iconUrl(p.slug) : ""); }
 function letterOf(p) { return (p.en || p.name || "?").charAt(0).toUpperCase();}
 function selected() {
 for (var i = 0; i < products.length; i++) if (products[i].id === state.selectedId) return products[i];
@@ -642,9 +835,10 @@ var letter = document.createElement("span");
 letter.className = "letter";
 letter.textContent = letterOf(p);
 tile.appendChild(letter);
-if (p.slug) {
+var icon = iconSrc(p);
+if (icon) {
 var img = document.createElement("img");
-img.src = iconUrl(p.slug);
+img.src = icon;
 img.alt = "";
 img.loading = "lazy";
 img.onerror = function () { this.style.display = "none";};
@@ -697,9 +891,20 @@ rank.className = "tier-rank"; rank.textContent = i + 1;
 b.appendChild(rank);
 var main = document.createElement("span");
 main.className = "tier-main";
+var fl = document.createElement("img");
+fl.className = "tier-flag";
+fl.src = flagUrl(country); fl.alt = ""; fl.loading = "lazy";
+fl.onerror = function () { this.style.display = "none";};
+main.appendChild(fl);
 var cn = document.createElement("span");
-cn.className = "tier-country"; cn.textContent = country;
+cn.className = "tier-country"; cn.textContent = countryName(country);
 main.appendChild(cn);
+var dc = dialCode(country);
+if (dc) {
+var dial = document.createElement("span");
+dial.className = "tier-dial"; dial.textContent = dc;
+main.appendChild(dial);
+}
 var badge = document.createElement("span");
 badge.className = "tier-badge" + (i >= 4? " premium": "");
 badge.textContent = tierLabel(i);
@@ -754,7 +959,8 @@ var lines = [""];
 lines.push("服务：" + p.name + (p.en && p.en!== p.name? "（" + p.en + "）": ""));
 if (price!== null) {
 var idx = Math.min(state.tierIdx, p.countries.length - 1);
-lines.push("国家：" + p.countries[idx]);
+var ck = p.countries[idx];
+lines.push("国家：" + countryName(ck) + (dialCode(ck) ? " " + dialCode(ck) : ""));
 lines.push("档位：" + tierLabel(idx));
 lines.push("单价：" + fmtUsdt(price) + " USDT");
 lines.push("数量：" + state.qty);
@@ -772,16 +978,17 @@ var p = selected();
 if (!p) return;
 $("selLetter").textContent = letterOf(p);
 var icon = $("selIcon");
-if (p.slug) {
+var selSrc = iconSrc(p);
+if (selSrc) {
 icon.style.display = "";
-icon.src = iconUrl(p.slug);
+icon.src = selSrc;
 } else {
 icon.style.display = "none";
 }
 var price = unitPrice();
 if (price!== null) {
 var idx = Math.min(state.tierIdx, p.countries.length - 1);
-$("selName").textContent = p.name + " · " + p.countries[idx];
+$("selName").textContent = p.name + " · " + countryName(p.countries[idx]);
 $("selPrice").textContent = fmtUsdt(price) + " USDT · " + tierLabel(idx);
 $("totalVal").textContent = fmtUsdt(price * state.qty) + " USDT";
 } else {
@@ -884,7 +1091,7 @@ var name = $("newName").value.trim();
 if (!name) { toast("先填新商品的名字"); return;}
 products.push({
 id: "custom-" + Date.now(),
-name: name, en: name, slug: "", sim: "",
+name: name, en: name, slug: "", sim: "", icon: "",
 countries: [], live: false, on: true
 });
 $("newName").value = "";
@@ -938,7 +1145,7 @@ rows.push({ key: key, cost: it.cost});
 });
 if (!rows.length) throw new Error("no stock");
 rows.sort(function (a, b) { return a.cost - b.cost;});
-resolve(rows.slice(0, 10).map(function (r) { return countryName(r.key);}));
+resolve(rows.slice(0, 10).map(function (r) { return r.key;}));
 })
 .catch(function () { resolve(null);});
 });
