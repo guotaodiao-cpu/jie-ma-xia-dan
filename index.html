@@ -147,6 +147,7 @@
       .tier.selected .tier-rank { background: var(--accent); color: #fff; }
       .tier-main { flex: 1; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-width: 0; }
       .tier-country { font-weight: 700; font-size: 15px; }
+      .tiers-block { scroll-margin-top: 12px; }
       .tier-flag { width: 22px; height: 16px; border-radius: 3px; object-fit: cover; flex: none; box-shadow: 0 0 0 1px rgba(21, 34, 45, .14); }
       .tier-dial { color: var(--muted); font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
       .tier-badge {
@@ -352,7 +353,7 @@
 
       <div class="steps" aria-label="下单流程">
         <div class="step"><span class="step-num">1</span><div><b>选服务</b><span>点下面要注册的平台</span></div></div>
-        <div class="step"><span class="step-num">2</span><div><b>选国家档位</b><span>从便宜到贵，十档可选</span></div></div>
+        <div class="step"><span class="step-num">2</span><div><b>选国家档位</b><span>从便宜到贵，二十档可选</span></div></div>
         <div class="step"><span class="step-num">3</span><div><b>付款</b><span>USDT 付款；微信/支付宝请电报联系店主</span></div></div>
         <div class="step"><span class="step-num">4</span><div><b>去电报下单</b><span>订单自动复制，粘贴发送，付款后发码</span></div></div>
       </div>
@@ -362,18 +363,18 @@
           <section aria-label="商品列表">
             <div class="section-head">
               <h2>选服务</h2>
-              <span class="price-note" id="priceNote">每个服务最多 10 个国家，按进价从便宜到贵排</span>
+              <span class="price-note" id="priceNote">每个服务最多 20 个国家，按进价从便宜到贵排</span>
             </div>
             <div class="grid" id="grid"></div>
           </section>
 
-          <section class="tiers-block" aria-label="国家档位">
+          <section class="tiers-block" id="tierSection" aria-label="国家档位">
             <div class="section-head">
               <h2>选国家档位</h2>
               <span class="price-note" id="tierFor"></span>
             </div>
             <div class="tiers-grid" id="tierList"></div>
-            <p class="fx-note">全部价格按 1 USDT ≈ 7.2 元换算，十档对应人民币 ¥18–¥120，付款按 USDT 金额付。</p>
+            <p class="fx-note">全部价格按 1 USDT ≈ 7.2 元换算，二十档对应人民币 ¥18–¥120，付款按 USDT 金额付。</p>
             <a class="country-note" href="https://t.me/GT03888" target="_blank" rel="noopener">有指定的国家，请联系我的电报 @GT03888</a>
           </section>
         </div>
@@ -458,7 +459,7 @@
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
         </summary>
         <div class="settings-body">
-          <p class="settings-note">在这里改商品名、上架状态，或临时改 USDT 收款地址。页面默认收款地址是 TPspmThQbEdiSWg5afkJB3NSi5g9ybPcAX，在这里改只是临时换一下。价格是固定十档（2.50–16.67 USDT，按 1 USDT ≈ 7.2 元换算），国家按进价从便宜到贵自动排，不用手动改价。改动只在本次打开页面时有效，关掉页面会恢复默认。</p>
+          <p class="settings-note">在这里改商品名、上架状态，或临时改 USDT 收款地址。页面默认收款地址是 TPspmThQbEdiSWg5afkJB3NSi5g9ybPcAX，在这里改只是临时换一下。价格是固定二十档（2.50–16.67 USDT，按 1 USDT ≈ 7.2 元换算），国家按进价从便宜到贵自动排，不用手动改价。改动只在本次打开页面时有效，关掉页面会恢复默认。</p>
           <div id="settingsList"></div>
           <div class="set-add">
             <input type="text" id="newName" placeholder="新商品名，如：Spotify" aria-label="新商品名" />
@@ -485,46 +486,46 @@
 (function () {
 "use strict";
 
-/* 固定十档卖价（USDT）：人民币 18/25/32/40/48/58/70/84/100/120 元
+/* 固定二十档卖价（USDT）：人民币 18/22/26/30/35/40/45/50/55/60/66/72/78/84/90/96/103/110/115/120 元
 按 1 USDT ≈ 7.2 元换算。按 5sim 实时进价从便宜到贵依次对应。
-第 1–4 档普通账号，5–6 档精养一年，7–8 档精养两年，9–10 档精养三年。 */
-var TIERS = [2.50, 3.47, 4.44, 5.56, 6.67, 8.06, 9.72, 11.67, 13.89, 16.67];
+第 1–5 档普通账号，6–10 档精养一年，11–15 档精养两年，16–20 档精养三年。 */
+var TIERS = [2.50, 3.06, 3.61, 4.17, 4.86, 5.56, 6.25, 6.94, 7.64, 8.33, 9.17, 10.00, 10.83, 11.67, 12.50, 13.33, 14.31, 15.28, 15.97, 16.67];
 function tierLabel(i) {
-if (i < 4) return "普通账号";
-if (i < 6) return "精养一年";
-if (i < 8) return "精养两年";
+if (i < 5) return "普通账号";
+if (i < 10) return "精养一年";
+if (i < 15) return "精养两年";
 return "精养三年";
 }
 
-/* 拉不到实时进价时的兜底名单（2026-11-15 的数据，已按便宜到贵排好） */
+/* 拉不到实时进价时的兜底名单（2026-11-16 的数据，已按便宜到贵排好） */
 var FALLBACK = {
-telegram: ["colombia", "easttimor", "honduras", "srilanka", "ethiopia", "angola", "croatia", "serbia", "hungary", "indonesia"],
-whatsapp: ["easttimor", "elsalvador", "liberia", "bhutan", "laos", "costarica", "dominicana", "nicaragua", "philippines", "congo"],
-google: ["philippines", "indonesia", "romania", "ethiopia", "georgia", "canada", "bangladesh", "argentina", "kenya", "poland"],
-facebook: ["philippines", "egypt", "poland", "indonesia", "argentina", "jamaica", "malaysia", "liberia", "morocco", "cambodia"],
-instagram: ["georgia", "indonesia", "philippines", "argentina", "vietnam", "england", "kenya", "austria", "cambodia", "peru"],
-openai: ["netherlands", "argentina", "georgia", "indonesia", "pakistan", "england", "poland", "azerbaijan", "philippines", "afghanistan"],
-microsoft: ["liberia", "serbia", "philippines", "romania", "thailand", "indonesia", "honduras", "bangladesh", "slovenia", "netherlands"],
-discord: ["indonesia", "kenya", "netherlands", "england", "croatia", "argentina", "czech", "romania", "poland", "philippines"],
-tiktok: ["indonesia", "argentina", "romania", "england", "lithuania", "netherlands", "finland", "philippines", "slovenia", "honduras"],
-amazon: ["argentina", "czech", "georgia", "kenya", "poland", "vietnam", "indonesia", "philippines", "cambodia", "netherlands"],
-apple: ["indonesia", "england", "italy", "philippines", "argentina", "brazil", "kenya", "luxembourg", "poland", "zambia"],
-x: ["kenya", "liberia", "vietnam", "usa", "canada", "germany", "indonesia", "romania", "finland", "england"],
-wechat: ["philippines", "england", "brazil", "indonesia", "spain", "kenya", "luxembourg", "canada", "sweden", "croatia"],
-qq: ["england", "netherlands", "indonesia", "poland", "canada", "usa", "israel", "brazil", "georgia", "spain"],
+telegram: ["colombia", "easttimor", "honduras", "srilanka", "ethiopia", "angola", "croatia", "serbia", "hungary", "indonesia", "philippines", "gabon", "cameroon", "senegal", "sierraleone", "malawi", "ghana", "nigeria", "laos", "uganda"],
+whatsapp: ["easttimor", "salvador", "liberia", "bhutane", "laos", "costarica", "dominicana", "nicaragua", "philippines", "congo", "croatia", "ethiopia", "suriname", "romania", "albania", "indonesia", "argentina", "guatemala", "antiguaandbarbuda", "djibouti"],
+google: ["philippines", "indonesia", "romania", "ethiopia", "georgia", "canada", "bangladesh", "argentina", "kenya", "poland", "cambodia", "honduras", "ireland", "colombia", "morocco", "pakistan", "nicaragua", "armenia", "laos", "vietnam"],
+facebook: ["philippines", "egypt", "poland", "indonesia", "argentina", "jamaica", "malaysia", "liberia", "morocco", "cambodia", "czech", "england", "malawi", "srilanka", "france", "latvia", "lithuania", "mozambique", "bahrain", "barbados"],
+instagram: ["georgia", "indonesia", "argentina", "vietnam", "england", "philippines", "kenya", "austria", "cambodia", "peru", "romania", "thailand", "malawi", "mozambique", "brazil", "czech", "denmark", "estonia", "latvia", "lithuania"],
+openai: ["netherlands", "argentina", "georgia", "indonesia", "pakistan", "england", "poland", "azerbaijan", "philippines", "afghanistan", "albania", "algeria", "armenia", "bangladesh", "barbados", "bolivia", "botswana", "bulgaria", "burkinafaso", "cameroon"],
+microsoft: ["serbia", "philippines", "romania", "thailand", "indonesia", "honduras", "bangladesh", "slovenia", "netherlands", "czech", "latvia", "lithuania", "poland", "vietnam", "england", "argentina", "brazil", "peru", "colombia", "france"],
+discord: ["indonesia", "kenya", "netherlands", "england", "croatia", "argentina", "czech", "romania", "poland", "philippines", "vietnam", "france", "georgia", "israel", "peru", "canada", "brazil", "lithuania", "cambodia", "srilanka"],
+tiktok: ["indonesia", "argentina", "romania", "england", "lithuania", "netherlands", "finland", "philippines", "slovenia", "honduras", "czech", "georgia", "canada", "denmark", "france", "spain", "austria", "croatia", "vietnam", "saintlucia"],
+amazon: ["argentina", "czech", "georgia", "kenya", "poland", "vietnam", "indonesia", "philippines", "cambodia", "netherlands", "thailand", "france", "canada", "brazil", "england", "ireland", "romania", "mexico", "colombia", "ivorycoast"],
+apple: ["indonesia", "england", "italy", "philippines", "argentina", "brazil", "kenya", "luxembourg", "poland", "zambia", "canada", "romania", "srilanka", "netherlands", "georgia", "peru", "serbia", "thailand", "benin", "czech"],
+x: ["kenya", "vietnam", "usa", "canada", "indonesia", "romania", "finland", "england", "poland", "uganda", "france", "philippines", "burkinafaso", "ghana", "argentina", "czech", "spain", "colombia", "netherlands", "israel"],
+wechat: ["philippines", "england", "brazil", "indonesia", "spain", "kenya", "luxembourg", "canada", "sweden", "croatia", "france", "usa", "argentina", "netherlands", "thailand", "austria", "pakistan", "uganda", "ivorycoast", "mexico"],
+qq: ["england", "netherlands", "indonesia", "poland", "canada", "usa", "israel", "brazil", "georgia", "spain", "estonia", "romania", "srilanka", "france", "argentina", "philippines", "cambodia", "italy", "kenya", "czech"],
 toutiao: ["england", "indonesia", "malaysia", "vietnam", "usa", "hongkong"],
 momo: ["brazil", "england", "honduras", "indonesia", "vietnam", "argentina", "usa", "sweden", "australia"],
-tantan: ["poland", "kenya", "israel", "argentina", "brazil", "england", "montenegro", "netherlands", "italy", "philippines"],
-soul: ["england", "argentina", "austria", "czech", "georgia", "indonesia", "kazakhstan", "netherlands", "philippines", "poland"],
-weibo: ["germany", "england", "indonesia", "denmark", "netherlands", "philippines", "argentina", "georgia", "poland", "austria"],
-bilibili: ["england", "israel", "denmark", "indonesia", "canada", "poland", "philippines", "usa", "hongkong", "netherlands"],
-baidu: ["indonesia", "austria", "philippines", "netherlands", "argentina", "spain", "poland", "georgia", "serbia", "brazil"],
-taobao: ["denmark", "england", "netherlands", "israel", "argentina", "brazil", "montenegro", "usa", "canada", "indonesia"],
+tantan: ["poland", "kenya", "israel", "argentina", "brazil", "england", "montenegro", "netherlands", "italy", "philippines", "zambia", "colombia", "usa", "indonesia", "azerbaijan", "guatemala", "malawi", "morocco", "bangladesh", "malaysia"],
+soul: ["england", "argentina", "austria", "czech", "georgia", "indonesia", "kazakhstan", "netherlands", "philippines", "poland", "spain", "canada", "usa", "hongkong"],
+weibo: ["germany", "england", "indonesia", "denmark", "netherlands", "philippines", "argentina", "georgia", "poland", "austria", "southafrica", "cameroon", "latvia", "malawi", "bulgaria", "armenia", "sweden", "laos", "peru", "romania"],
+bilibili: ["england", "israel", "denmark", "indonesia", "canada", "poland", "philippines", "usa", "hongkong", "netherlands", "argentina", "austria", "georgia", "kazakhstan", "spain", "croatia", "czech", "pakistan", "ireland", "france"],
+baidu: ["indonesia", "austria", "philippines", "netherlands", "argentina", "spain", "poland", "georgia", "serbia", "brazil", "england", "israel", "italy", "peru", "srilanka", "kenya", "thailand", "romania", "mexico", "morocco"],
+taobao: ["denmark", "england", "netherlands", "israel", "argentina", "brazil", "montenegro", "usa", "canada", "indonesia", "italy", "kenya", "benin", "india", "poland", "france", "germany", "mexico", "azerbaijan", "egypt"],
 xianyu: ["england", "hongkong"],
 pinduoduo: ["england", "netherlands", "poland", "indonesia", "kazakhstan", "canada", "hongkong", "usa"],
-alipay: ["indonesia", "poland", "canada", "colombia", "netherlands", "argentina", "philippines", "denmark", "england", "kenya"],
+alipay: ["indonesia", "poland", "canada", "colombia", "netherlands", "argentina", "philippines", "denmark", "england", "kenya", "peru", "southafrica", "vietnam", "usa", "morocco", "serbia", "mexico", "cambodia", "italy", "thailand"],
 dingtalk: ["england", "israel", "philippines", "canada", "usa", "hongkong"],
-zhihu: ["usa", "england", "italy", "netherlands", "portugal", "argentina", "austria", "australia", "poland", "hongkong"]
+zhihu: ["usa", "england", "italy", "netherlands", "portugal", "argentina", "austria", "australia", "poland", "hongkong"],
 };
 
 /* 5sim 国家英文名 → 中文名（实时排序时用；没有收录的显示英文原名） */
@@ -567,7 +568,16 @@ tajikistan: "塔吉克斯坦", tanzania: "坦桑尼亚", thailand: "泰国", tog
 tunisia: "突尼斯", turkey: "土耳其", uganda: "乌干达", ukraine: "乌克兰",
 uae: "阿联酋", emirates: "阿联酋", uruguay: "乌拉圭", usa: "美国",
 unitedstates: "美国", uzbekistan: "乌兹别克斯坦", venezuela: "委内瑞拉", vietnam: "越南",
-yemen: "也门", zambia: "赞比亚", zimbabwe: "津巴布韦"
+yemen: "也门", zambia: "赞比亚", zimbabwe: "津巴布韦",
+antiguaandbarbuda: "安提瓜和巴布达",
+barbados: "巴巴多斯",
+benin: "贝宁",
+bhutane: "不丹",
+djibouti: "吉布提",
+malawi: "马拉维",
+saintlucia: "圣卢西亚",
+salvador: "萨尔瓦多",
+suriname: "苏里南",
 };
 function countryName(key) {
 if (COUNTRY_ZH[key]) return COUNTRY_ZH[key];
@@ -730,6 +740,15 @@ vietnam: ["vn", "+84"],
 yemen: ["ye", "+967"],
 zambia: ["zm", "+260"],
 zimbabwe: ["zw", "+263"],
+antiguaandbarbuda: ["ag", "+1"],
+barbados: ["bb", "+1"],
+benin: ["bj", "+229"],
+bhutane: ["bt", "+975"],
+djibouti: ["dj", "+253"],
+malawi: ["mw", "+265"],
+saintlucia: ["lc", "+1"],
+salvador: ["sv", "+503"],
+suriname: ["sr", "+597"],
 };
 function flagUrl(key) { var m = COUNTRY_META[key]; return m ? "https://flagcdn.com/w40/" + m[0] + ".png" : ""; }
 function dialCode(key) { var m = COUNTRY_META[key]; return m ? m[1] : ""; }
@@ -863,6 +882,13 @@ btn.addEventListener("click", function () {
 state.selectedId = p.id;
 state.tierIdx = 0;
 renderGrid(); renderTiers(); renderOrder();
+requestAnimationFrame(function () {
+var el = document.getElementById("tierSection");
+if (el) {
+var smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+el.scrollIntoView({behavior: smooth ? "smooth" : "auto", block: "start"});
+}
+});
 });
 grid.appendChild(btn);
 });
@@ -906,7 +932,7 @@ dial.className = "tier-dial"; dial.textContent = dc;
 main.appendChild(dial);
 }
 var badge = document.createElement("span");
-badge.className = "tier-badge" + (i >= 4? " premium": "");
+badge.className = "tier-badge" + (i >= 5? " premium": "");
 badge.textContent = tierLabel(i);
 main.appendChild(badge);
 b.appendChild(main);
@@ -1121,7 +1147,7 @@ refreshPrices();
 
 /* ---------- 实时进价排序：5sim 游客接口 ----------
 每个服务取有货国家里进价最便宜的 10 个，从便宜到贵排，
-依次对应十档卖价。拉不到就保留兜底名单。 */
+依次对应二十档卖价。拉不到就保留兜底名单。 */
 function fetchTierCountries(sim) {
 return new Promise(function (resolve) {
 var url = "https://5sim.net/v1/guest/prices?product=" + encodeURIComponent(sim);
@@ -1145,7 +1171,7 @@ rows.push({ key: key, cost: it.cost});
 });
 if (!rows.length) throw new Error("no stock");
 rows.sort(function (a, b) { return a.cost - b.cost;});
-resolve(rows.slice(0, 10).map(function (r) { return r.key;}));
+resolve(rows.slice(0, 20).map(function (r) { return r.key;}));
 })
 .catch(function () { resolve(null);});
 });
