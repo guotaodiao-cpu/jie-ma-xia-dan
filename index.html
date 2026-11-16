@@ -505,17 +505,28 @@
 (function () {
 "use strict";
 
-/* 定价：卖价（USDT）= 成本（美元）+ 固定加价，向上取整到整数，按 1 USDT ≈ 7 元换算。
-   先按原公式算卖价（加价 15 元，精养一年档卖价>8.33 再加 1 USDT），
-   国内 App（微信/QQ/今日头条/陌陌/探探/Soul/微博/哔哩哔哩/百度/淘宝/闲鱼/拼多多/支付宝/钉钉/知乎）
-   在这个卖价上再加 2 USDT。
-   档位标签按卖价分：≤4.86 USDT 特价账号，≤8.33 精养半年，其余精养一年。 */
+/* 定价：原价 = 成本（美元）+ 15 元加价，向上取整到整数，按 1 USDT ≈ 7 元换算；
+   精养一年档（原价>8.33）原价上再加 1 USDT；国内 App 原价上再加 2 USDT。
+   档位按原价分：≤4.86 USDT 特价账号，≤8.33 精养半年，其余精养一年。
+   国内 App 的最终卖价 = 原价 × 倍数：特价 ×1，精养半年 ×2，精养一年 ×3；
+   国外 App 不乘倍数，卖价就是原价。 */
 var DOMESTIC_IDS = ["wechat", "qq", "toutiao", "momo", "tantan", "soul", "weibo", "bilibili", "baidu", "taobao", "xianyu", "pinduoduo", "alipay", "dingtalk", "zhihu"];
-function tierPrice(costUsd, productId) {
+function tierOrigPrice(costUsd, productId) {
 var base = Math.ceil(costUsd + 15 / 7);
 var price = base > 8.33 ? base + 1 : base;
 if (DOMESTIC_IDS.indexOf(productId) >= 0) price += 2;
 return price;
+}
+function tierLabel(costUsd, productId) {
+return tierLabelByPrice(tierOrigPrice(costUsd, productId));
+}
+function tierPrice(costUsd, productId) {
+var orig = tierOrigPrice(costUsd, productId);
+if (DOMESTIC_IDS.indexOf(productId) < 0) return orig;
+var label = tierLabelByPrice(orig);
+if (label === "精养半年") return orig * 2;
+if (label === "精养一年") return orig * 3;
+return orig;
 }
 function tierLabelByPrice(price) {
 if (price <= 4.86) return "特价账号";
@@ -1082,7 +1093,7 @@ b.appendChild(dial);
 }
 var badge = document.createElement("span");
 badge.className = "tier-badge" + (r.price > 4.86 ? " premium" : "");
-badge.textContent = tierLabelByPrice(r.price);
+badge.textContent = tierLabel(r.p.costs[r.key], r.p.id);
 b.appendChild(badge);
 var price = document.createElement("span");
 price.className = "cr-price"; price.textContent = fmtUsdt(r.price) + " USDT";
@@ -1142,7 +1153,7 @@ main.appendChild(dial);
 var rowPrice = tierPrice(p.costs[country], p.id);
 var badge = document.createElement("span");
 badge.className = "tier-badge" + (rowPrice > 4.86? " premium": "");
-badge.textContent = tierLabelByPrice(rowPrice);
+badge.textContent = tierLabel(p.costs[country], p.id);
 main.appendChild(badge);
 b.appendChild(main);
 var price = document.createElement("span");
@@ -1203,7 +1214,7 @@ if (price!== null) {
 var idx = Math.min(state.tierIdx, p.countries.length - 1);
 var ck = p.countries[idx];
 lines.push("国家：" + countryName(ck) + (dialCode(ck) ? " " + dialCode(ck) : ""));
-lines.push("档位：" + tierLabelByPrice(price));
+lines.push("档位：" + tierLabel(p.costs[ck], p.id));
 lines.push("单价：" + fmtUsdt(price) + " USDT");
 lines.push("数量：" + state.qty);
 lines.push("总价：" + fmtUsdt(price * state.qty) + " USDT");
@@ -1231,7 +1242,7 @@ var price = unitPrice();
 if (price!== null) {
 var idx = Math.min(state.tierIdx, p.countries.length - 1);
 $("selName").textContent = p.name + " · " + countryName(p.countries[idx]);
-$("selPrice").textContent = fmtUsdt(price) + " USDT · " + tierLabelByPrice(price);
+$("selPrice").textContent = fmtUsdt(price) + " USDT · " + tierLabel(p.costs[p.countries[idx]], p.id);
 $("totalVal").textContent = fmtUsdt(price * state.qty) + " USDT";
 } else {
 $("selName").textContent = p.name;
