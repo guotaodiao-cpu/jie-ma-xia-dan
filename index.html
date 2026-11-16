@@ -190,7 +190,7 @@
         box-shadow: var(--shadow); padding: 20px; position: sticky; top: 16px;
       }
       .order h2 { font-size: 19px; font-weight: 900; margin: 0 0 14px; }
-      .sel-summary { display: flex; align-items: center; gap: 12px; background: var(--surface-2); border-radius: 12px; padding: 12px; }
+      .sel-summary { display: flex; align-items: center; gap: 12px; background: var(--surface-2); border-radius: 12px; padding: 12px; margin-top: 14px; }
       .sel-summary .tile { width: 42px; height: 42px; margin: 0; border-radius: 10px; }
       .sel-summary .tile img { width: 24px; height: 24px; }
       .sel-summary .sname { font-weight: 700; font-size: 16px; line-height: 1.3; }
@@ -221,6 +221,7 @@
       .pay-opt .ptile .letter { font-weight: 900; font-size: 15px; color: var(--muted); }
       .pay-opt .ptile img { position: absolute; inset: 0; margin: auto; width: 26px; height: 26px; }
       .pay-opt .pname2 { font-size: 13.5px; font-weight: 700; }
+      .pay-opt .pnote { margin-left: auto; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
       .pay-opt.selected { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
       .pay-grid.single { grid-template-columns: 1fr; }
       .pay-grid.single .pay-opt { flex-direction: row; justify-content: flex-start; gap: 10px; padding: 10px 14px; min-height: 56px; }
@@ -236,7 +237,7 @@
         background: var(--accent); color: #fff; font-weight: 900; font-size: 16.5px; line-height: 1.45;
         text-decoration: none;
       }
-      .total-row { display: flex; align-items: baseline; justify-content: space-between; margin-top: 18px; padding-top: 14px; border-top: 1px dashed var(--line); }
+      .total-row { display: flex; align-items: baseline; justify-content: space-between; margin-top: 2px; }
       .total-row .tlabel { color: var(--muted); font-size: 14px; }
       .total-row .tval { font-size: 26px; font-weight: 900; color: var(--good); font-variant-numeric: tabular-nums; }
       .preview {
@@ -309,6 +310,7 @@
       .modal-order { font-size: 14.5px; color: var(--muted); margin: 0 0 14px; font-weight: 700; }
       .modal-addr { margin-bottom: 14px; }
       .modal-steps { margin: 0 0 16px; padding-left: 20px; font-size: 14.5px; line-height: 1.7; color: var(--muted); }
+      .modal-contact { font-size: 14.5px; line-height: 1.7; color: var(--muted); margin: 0 0 16px; }
       .modal .cta { margin-top: 0; margin-bottom: 10px; }
       .modal-close {
         width: 100%; min-height: 44px; border-radius: 10px; cursor: pointer;
@@ -397,6 +399,12 @@
 
         <aside class="order" id="orderPanel" aria-label="下单面板">
           <h2>下单</h2>
+          <div class="total-row">
+            <span class="tlabel">总价</span>
+            <span class="tval" id="totalVal">0.00 USDT</span>
+          </div>
+          <p class="fx-note">按 1 USDT ≈ 7.2 元换算</p>
+
           <div class="sel-summary">
             <span class="tile"><span class="letter" id="selLetter">T</span><img id="selIcon" alt="" onerror="this.style.display='none'" /></span>
             <div>
@@ -417,26 +425,19 @@
           <div class="field">
             <span class="flabel" id="payLabel">付款方式</span>
             <div class="pay-grid single" role="radiogroup" aria-labelledby="payLabel" id="payGrid"></div>
-            <a class="pay-notice" href="https://t.me/GT03888" target="_blank" rel="noopener">如需使用微信或支付宝付款，请联系我的电报 @GT03888</a>
           </div>
-
-          <div class="total-row">
-            <span class="tlabel">总价</span>
-            <span class="tval" id="totalVal">0.00 USDT</span>
-          </div>
-          <p class="fx-note">按 1 USDT ≈ 7.2 元换算</p>
 
           <div class="preview" id="orderPreview" aria-label="订单内容预览"></div>
 
           <a class="cta" id="ctaOrder" href="https://t.me/GT03888" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.9 4.6c.2-1-.6-1.9-1.6-1.7L2.7 9.3c-1 .3-1.2 1.6-.3 2.2l4.6 3 2.1 5.4c.3.8 1.4 1 2 .3l2.4-2.6 4.2 3c.8.6 1.9.1 2-.8l2.2-15.2ZM8.4 13.5l9.7-6.4c.2-.1.3.2.1.3l-8 7.6-.3 3-1.5-4.5Z"/></svg>
-            下单，查看收款地址
+            <span id="ctaLabel">下单，查看收款地址</span>
           </a>
           <button type="button" class="cta-sub" id="btnCopy">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
             只复制订单内容
           </button>
-          <p class="order-hint">点上面按钮会先弹出收款地址，付完款再去电报发订单和付款截图。</p>
+          <p class="order-hint" id="orderHint">点上面按钮会先弹出收款地址，付完款再去电报发订单和付款截图。</p>
         </aside>
       </div>
 
@@ -479,12 +480,13 @@
       <div class="modal" role="dialog" aria-modal="true" aria-labelledby="payModalTitle">
         <h3 id="payModalTitle">付款地址</h3>
         <p class="modal-order" id="modalOrder">—</p>
-        <div class="modal-addr">
+        <div class="modal-addr" id="modalAddrBox">
           <div style="font-size:13px;font-weight:700;margin-bottom:6px;">USDT 收款地址（TRC20）</div>
           <div class="addr-val" id="modalAddr">TPspmThQbEdiSWg5afkJB3NSi5g9ybPcAX</div>
           <button type="button" class="addr-copy" id="btnCopyModalAddr">一键复制收款地址</button>
         </div>
-        <ol class="modal-steps">
+        <p class="modal-contact" id="modalContact" hidden></p>
+        <ol class="modal-steps" id="modalSteps">
           <li>复制上面的地址，按总价转 USDT（走 TRC20 网络）。</li>
           <li>转好后点下面按钮，去电报把订单和付款截图发给店主，确认后马上发码。</li>
         </ol>
@@ -867,7 +869,9 @@ var SERVICES = [
 ];
 
 var PAY_METHODS = [
-{ id: "usdt", name: "USDT（TRC20）", slug: "tether", letter: "U"}
+{ id: "usdt", name: "USDT（TRC20）", slug: "tether", letter: "U"},
+{ id: "wechat", name: "微信", slug: "wechat", letter: "微", contact: true },
+{ id: "alipay", name: "支付宝", slug: "alipay", letter: "支", contact: true }
 ];
 
 function freshProducts() {
@@ -1162,12 +1166,27 @@ b.appendChild(t);
 var n = document.createElement("span");
 n.className = "pname2"; n.textContent = m.name;
 b.appendChild(n);
+if (m.contact) {
+var note = document.createElement("span");
+note.className = "pnote"; note.textContent = "联系店主电报";
+b.appendChild(note);
+}
 b.addEventListener("click", function () {
 state.payId = m.id;
 renderPay(); renderOrder();
 });
 payGrid.appendChild(b);
 });
+renderPayLabel();
+}
+
+/* 下单按钮和提示跟着付款方式变：USDT 看收款地址，微信/支付宝去电报找店主 */
+function renderPayLabel() {
+var isUsdt = state.payId === "usdt";
+$("ctaLabel").textContent = isUsdt ? "下单，查看收款地址" : "下单，去电报联系店主";
+$("orderHint").textContent = isUsdt
+? "点上面按钮会先弹出收款地址，付完款再去电报发订单和付款截图。"
+: "点上面按钮会复制订单并打开店主电报，付款方式请在电报里和店主确认。";
 }
 
 /* ---------- 订单面板 ---------- */
@@ -1249,12 +1268,28 @@ navigator.clipboard.writeText(text).then(done, fallback);
 function openPayModal() {
 var p = selected();
 var price = unitPrice();
-$("modalAddr").textContent = state.usdtAddress;
+var isUsdt = state.payId === "usdt";
 if (price !== null) {
 var idx = Math.min(state.tierIdx, p.countries.length - 1);
 $("modalOrder").textContent = p.name + " · " + countryName(p.countries[idx]) + " × " + state.qty + "，总价 " + fmtUsdt(price * state.qty) + " USDT";
 } else {
 $("modalOrder").textContent = p.name + " × " + state.qty + "，价格私聊确认";
+}
+if (isUsdt) {
+$("payModalTitle").textContent = "付款地址";
+$("modalAddr").textContent = state.usdtAddress;
+$("modalAddrBox").hidden = false;
+$("modalContact").hidden = true;
+$("modalSteps").innerHTML = "<li>复制上面的地址，按总价转 USDT（走 TRC20 网络）。</li><li>转好后点下面按钮，去电报把订单和付款截图发给店主，确认后马上发码。</li>";
+$("btnModalGo").textContent = "已付款，去电报发订单";
+} else {
+var mName = payName();
+$("payModalTitle").textContent = mName + "付款";
+$("modalAddrBox").hidden = true;
+$("modalContact").hidden = false;
+$("modalContact").textContent = mName + "付款请联系店主电报 @GT03888，店主会发你收款方式。";
+$("modalSteps").innerHTML = "<li>点下面按钮，复制订单并打开店主电报。</li><li>在电报里把订单发给店主，店主发你" + mName + "收款方式，付款后把截图发过去，确认后马上发码。</li>";
+$("btnModalGo").textContent = "复制订单，去电报联系店主";
 }
 $("payModal").classList.add("show");
 $("payModal").setAttribute("aria-hidden", "false");
