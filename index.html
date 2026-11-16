@@ -504,10 +504,10 @@
 (function () {
 "use strict";
 
-/* 定价：卖价（USDT）= 成本（美元）+ 固定加价，按 1 USDT ≈ 7.2 元换算。
+/* 定价：卖价（USDT）= 成本（美元）+ 固定加价，向上取整到整数，按 1 USDT ≈ 7.2 元换算。
    档位标签按卖价分：≤4.86 USDT 特价账号，≤8.33 精养半年，其余精养一年。 */
 function tierPrice(costUsd) {
-return Math.round((costUsd + 15 / 7.2) * 100) / 100;
+return Math.ceil(costUsd + 15 / 7.2);
 }
 function tierLabelByPrice(price) {
 if (price <= 4.86) return "特价账号";
@@ -903,7 +903,7 @@ usdtAddress: DEFAULT_USDT_ADDRESS
 var $ = function (id) { return document.getElementById(id);};
 var grid = $("grid"), tierList = $("tierList"), payGrid = $("payGrid");
 
-function fmtUsdt(v) { return (Math.round(v * 100) / 100).toFixed(2); }
+function fmtUsdt(v) { return String(Math.round(v)); }
 function iconUrl(slug) { return "https://cdn.simpleicons.org/" + slug;}
 function iconSrc(p) { return p.icon || (p.slug ? iconUrl(p.slug) : ""); }
 function letterOf(p) { return (p.en || p.name || "?").charAt(0).toUpperCase();}
@@ -1228,7 +1228,7 @@ $("orderPreview").textContent = orderText();
 }
 
 /* ---------- 自动发货（后端 Worker，未填地址时等于不存在） ---------- */
-var AUTO_BACKEND = ""; // 自动发货后端 Worker 地址，部署后填，例如 "https://jie-ma-auto-delivery.<子域名>.workers.dev"，留空则只走原来的电报人工流程
+var AUTO_BACKEND = "https://jie-ma-auto-delivery.guotaodiao.workers.dev"; // 自动发货后端 Worker 地址，留空则只走原来的电报人工流程
 var AUTO_MANUAL_STEPS = null; // 弹窗原步骤，自动模式下临时替换，手动模式恢复
 var autoPollTimer = null;
 
