@@ -222,6 +222,9 @@
       .pay-opt .ptile img { position: absolute; inset: 0; margin: auto; width: 26px; height: 26px; }
       .pay-opt .pname2 { font-size: 13.5px; font-weight: 700; }
       .pay-opt .pnote { margin-left: auto; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+      .pay-opt .ptext { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; min-width: 0; }
+      .pay-grid.single .pay-opt .pnote { margin-left: 0; }
+      .modal-addr[hidden] { display: none; }
       .pay-opt.selected { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
       .pay-grid.single { grid-template-columns: 1fr; }
       .pay-grid.single .pay-opt { flex-direction: row; justify-content: flex-start; gap: 10px; padding: 10px 14px; min-height: 56px; }
@@ -443,12 +446,11 @@
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.9 4.6c.2-1-.6-1.9-1.6-1.7L2.7 9.3c-1 .3-1.2 1.6-.3 2.2l4.6 3 2.1 5.4c.3.8 1.4 1 2 .3l2.4-2.6 4.2 3c.8.6 1.9.1 2-.8l2.2-15.2ZM8.4 13.5l9.7-6.4c.2-.1.3.2.1.3l-8 7.6-.3 3-1.5-4.5Z"/></svg>
             下单，查看收款地址
           </a>
-          <a class="pay-notice" href="https://t.me/GT03888" target="_blank" rel="noopener">如需使用微信或支付宝付款，请联系我的电报 @GT03888</a>
           <button type="button" class="cta-sub" id="btnCopy">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
             只复制订单内容
           </button>
-          <p class="order-hint">点上面按钮会先弹出收款地址，付完款再去电报发订单和付款截图。</p>
+          <p class="order-hint">选 USDT 点下单会先弹出 TRC20 收款地址，付完款再去电报发订单；选微信或支付宝点下单会弹出联系店主电报 @GT03888。</p>
           <div class="auto-status" id="autoStatus" hidden>
             <div class="st-title" id="autoStatusTitle">订单进度</div>
             <div class="st-line" id="autoStatusLine">—</div>
@@ -484,6 +486,10 @@
           <div style="font-size:13px;font-weight:700;margin-bottom:6px;">USDT 收款地址（TRC20）</div>
           <div class="addr-val" id="modalAddr">TPspmThQbEdiSWg5afkJB3NSi5g9ybPcAX</div>
           <button type="button" class="addr-copy" id="btnCopyModalAddr">一键复制收款地址</button>
+        </div>
+        <div class="modal-addr" id="modalRmbBox" hidden>
+          <div style="font-size:13px;font-weight:700;margin-bottom:6px;">应付人民币（约）</div>
+          <div class="addr-val" id="modalRmb">—</div>
         </div>
         <ol class="modal-steps" id="modalSteps">
           <li>复制上面的地址，按总价转 USDT（走 TRC20 网络）。</li>
@@ -871,7 +877,9 @@ var SERVICES = [
 ];
 
 var PAY_METHODS = [
-{ id: "usdt", name: "USDT（TRC20）", slug: "tether", letter: "U"}
+{ id: "usdt", name: "USDT（TRC20）", slug: "tether", letter: "U", note: "页面直接显示收款地址" },
+{ id: "wechat", name: "微信", slug: "wechat", letter: "微", note: "联系店主电报付款" },
+{ id: "alipay", name: "支付宝", slug: "alipay", letter: "支", note: "联系店主电报付款" }
 ];
 
 function freshProducts() {
@@ -1163,9 +1171,15 @@ img.src = iconUrl(m.slug); img.alt = ""; img.loading = "lazy";
 img.onerror = function () { this.style.display = "none";};
 t.appendChild(img);
 b.appendChild(t);
+var tx = document.createElement("span");
+tx.className = "ptext";
 var n = document.createElement("span");
 n.className = "pname2"; n.textContent = m.name;
-b.appendChild(n);
+tx.appendChild(n);
+var nt = document.createElement("span");
+nt.className = "pnote"; nt.textContent = m.note || "";
+tx.appendChild(nt);
+b.appendChild(tx);
 b.addEventListener("click", function () {
 state.payId = m.id;
 renderPay(); renderOrder();
@@ -1356,9 +1370,18 @@ go.textContent = "我已付款，开始自动发货";
 manual.hidden = false;
 steps.innerHTML = "<li>复制上面的地址，按总价转 USDT（走 TRC20 网络）。</li><li>转好后点下面按钮，系统确认到账后自动买号发码到你邮箱。</li>";
 } else {
-go.textContent = "已付款，去电报发订单";
 manual.hidden = true;
+if (state.payId === "usdt") {
+go.textContent = "已付款，去电报发订单";
 steps.innerHTML = AUTO_MANUAL_STEPS;
+$("modalAddrBox").hidden = false;
+$("modalRmbBox").hidden = true;
+} else {
+go.textContent = "去电报联系店主";
+steps.innerHTML = "<li>去电报联系店主 @GT03888，把订单号和付款方式发给他。</li><li>按店主给的收款方式付款，付款后把截图发给店主，确认后马上发码。</li>";
+$("modalAddrBox").hidden = true;
+$("modalRmbBox").hidden = false;
+}
 }
 }
 
@@ -1396,9 +1419,12 @@ $("modalAddr").textContent = state.usdtAddress;
 if (price !== null) {
 var idx = Math.min(state.tierIdx, p.countries.length - 1);
 $("modalOrder").textContent = p.name + " · " + countryName(p.countries[idx]) + " × " + state.qty + "，总价 " + fmtUsdt(price * state.qty) + " USDT";
+$("modalRmb").textContent = "约 " + Math.round(price * state.qty * 7) + " 元";
 } else {
 $("modalOrder").textContent = p.name + " × " + state.qty + "，价格私聊确认";
+$("modalRmb").textContent = "价格私聊确认";
 }
+$("payModalTitle").textContent = state.payId === "usdt" ? "付款地址" : "联系店主付款";
 $("payModal").classList.add("show");
 $("payModal").setAttribute("aria-hidden", "false");
 autoSyncModal();
