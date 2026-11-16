@@ -402,7 +402,7 @@
               <span class="price-note" id="tierFor"></span>
             </div>
             <div class="tiers-grid" id="tierList"></div>
-            <p class="fx-note">价格按 1 USDT ≈ 7.2 元换算，付款按 USDT 金额付。</p>
+            <p class="fx-note">价格按 1 USDT ≈ 7 元换算，付款按 USDT 金额付。</p>
             <a class="country-note" href="https://t.me/GT03888" target="_blank" rel="noopener">有指定的国家，请联系我的电报 @GT03888</a>
           </section>
         </div>
@@ -413,7 +413,7 @@
             <span class="tlabel">总价</span>
             <span class="tval" id="totalVal">0.00 USDT</span>
           </div>
-          <p class="fx-note">按 1 USDT ≈ 7.2 元换算</p>
+          <p class="fx-note">按 1 USDT ≈ 7 元换算</p>
 
           <div class="sel-summary">
             <span class="tile"><span class="letter" id="selLetter">T</span><img id="selIcon" alt="" onerror="this.style.display='none'" /></span>
@@ -504,10 +504,10 @@
 (function () {
 "use strict";
 
-/* 定价：卖价（USDT）= 成本（美元）+ 固定加价，向上取整到整数，按 1 USDT ≈ 7.2 元换算。
+/* 定价：卖价（USDT）= 成本（美元）+ 固定加价，向上取整到整数，按 1 USDT ≈ 7 元换算。
    档位标签按卖价分：≤4.86 USDT 特价账号，≤8.33 精养半年，其余精养一年。 */
 function tierPrice(costUsd) {
-return Math.ceil(costUsd + 15 / 7.2);
+return Math.ceil(costUsd + 15 / 7);
 }
 function tierLabelByPrice(price) {
 if (price <= 4.86) return "特价账号";
