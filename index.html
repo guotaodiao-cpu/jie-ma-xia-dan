@@ -469,7 +469,7 @@
         <h2>下单须知</h2>
         <ul class="notes-list">
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>没收到验证码，全额退款，不用担心白花钱。</span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>特价账号是新号；精养账号是养了一到三年的老号，更稳、更不容易被封，价格也更高。</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>特价账号是新号；精养账号是养了半年到两年的老号，更稳、更不容易被封，价格也更高。</span></li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>一个号码只能注册一个账号，下单前先想好要注册哪个平台。</span></li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>付款后把付款截图发给店主，发码更快。</span></li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>国家的便宜贵排序每天按进价更新；你下单时选的档位价格，就是最终要付的价格。</span></li>
@@ -511,15 +511,15 @@
 "use strict";
 
 /* 定价：卖价（USDT）= 5sim 进价（美元）+ 15 元利润，按 1 USDT ≈ 7.2 元换算。
-   档位标签按卖价分：≤4.86 USDT 特价账号，≤8.33 精养一年，≤11.67 精养两年，其余精养三年。 */
+   档位标签按卖价分：≤4.86 USDT 特价账号，≤8.33 精养半年，≤11.67 精养两年，其余精养一年。 */
 function tierPrice(costUsd) {
 return Math.round((costUsd + 15 / 7.2) * 100) / 100;
 }
 function tierLabelByPrice(price) {
 if (price <= 4.86) return "特价账号";
-if (price <= 8.33) return "精养一年";
+if (price <= 8.33) return "精养半年";
 if (price <= 11.67) return "精养两年";
-return "精养三年";
+return "精养一年";
 }
 
 /* 拉不到实时进价时的兜底名单（2026-11-16 的 5sim 数据，全部有货国家，按便宜到贵排；tit 是 5sim 内部虚拟号池，不是国家，已排除） */
