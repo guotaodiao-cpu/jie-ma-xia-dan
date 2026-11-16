@@ -324,6 +324,29 @@
       }
       .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
+      .modal-overlay {
+        position: fixed; inset: 0; background: rgba(0,0,0,.55);
+        display: none; align-items: center; justify-content: center;
+        z-index: 60; padding: 16px;
+      }
+      .modal-overlay.show { display: flex; }
+      .modal {
+        background: var(--surface); color: var(--ink);
+        border: 1.5px solid var(--line); border-radius: 18px;
+        padding: 22px 20px; max-width: 480px; width: 100%;
+        box-shadow: 0 20px 60px rgba(0,0,0,.35);
+      }
+      .modal h3 { margin: 0 0 8px; font-size: 20px; }
+      .modal-order { font-size: 14.5px; color: var(--muted); margin: 0 0 14px; font-weight: 700; }
+      .modal-addr { margin-bottom: 14px; }
+      .modal-steps { margin: 0 0 16px; padding-left: 20px; font-size: 14.5px; line-height: 1.7; color: var(--muted); }
+      .modal .cta { margin-top: 0; margin-bottom: 10px; }
+      .modal-close {
+        width: 100%; min-height: 44px; border-radius: 10px; cursor: pointer;
+        border: 1.5px solid var(--line); background: var(--surface); color: var(--ink);
+        font: inherit; font-weight: 700; font-size: 14.5px;
+      }
+
       @media (max-width: 880px) {
         .layout { grid-template-columns: 1fr; }
         .order { position: static; }
@@ -351,7 +374,7 @@
           <span class="hero-contact">店主电报：<a href="https://t.me/GT03888" target="_blank" rel="noopener">@GT03888</a></span>
         </div>
         <h1>各平台接码，下单秒发码</h1>
-        <p>先选要注册的平台，再选国家档位：价格从便宜到贵排，便宜的是特价账号，贵的是精养账号。选好后点下单，会先把订单复制好，再打开店主的电报私聊，粘贴发送就行，付款确认后马上发码。</p>
+        <p>先选要注册的平台，再选国家档位：价格从便宜到贵排，便宜的是特价账号，贵的是精养账号。选好后点下单，会先弹出 USDT 收款地址，付款后再去电报发订单，确认后马上发码。</p>
         <div class="hero-tags">
           <span class="tag refund">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
@@ -438,13 +461,13 @@
 
           <a class="cta" id="ctaOrder" href="https://t.me/GT03888" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.9 4.6c.2-1-.6-1.9-1.6-1.7L2.7 9.3c-1 .3-1.2 1.6-.3 2.2l4.6 3 2.1 5.4c.3.8 1.4 1 2 .3l2.4-2.6 4.2 3c.8.6 1.9.1 2-.8l2.2-15.2ZM8.4 13.5l9.7-6.4c.2-.1.3.2.1.3l-8 7.6-.3 3-1.5-4.5Z"/></svg>
-            复制订单，去电报下单
+            下单，查看收款地址
           </a>
           <button type="button" class="cta-sub" id="btnCopy">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
             只复制订单内容
           </button>
-          <p class="order-hint">点上面按钮会先复制订单，再打开电报，在和店主的私聊里粘贴发送就行。</p>
+          <p class="order-hint">点上面按钮会先弹出收款地址，付完款再去电报发订单和付款截图。</p>
         </aside>
       </div>
 
@@ -505,6 +528,24 @@
     </div>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <div class="modal-overlay" id="payModal" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="payModalTitle">
+        <h3 id="payModalTitle">付款地址</h3>
+        <p class="modal-order" id="modalOrder">—</p>
+        <div class="modal-addr">
+          <div style="font-size:13px;font-weight:700;margin-bottom:6px;">USDT 收款地址（TRC20）</div>
+          <div class="addr-val" id="modalAddr">TPspmThQbEdiSWg5afkJB3NSi5g9ybPcAX</div>
+          <button type="button" class="addr-copy" id="btnCopyModalAddr">一键复制收款地址</button>
+        </div>
+        <ol class="modal-steps">
+          <li>复制上面的地址，按总价转 USDT（走 TRC20 网络）。</li>
+          <li>转好后点下面按钮，去电报把订单和付款截图发给店主，确认后马上发码。</li>
+        </ol>
+        <button type="button" class="cta" id="btnModalGo">已付款，去电报发订单</button>
+        <button type="button" class="modal-close" id="btnModalClose">先不付，关闭</button>
+      </div>
+    </div>
 
 <script>
 (function () {
@@ -1247,8 +1288,39 @@ navigator.clipboard.writeText(text).then(done, fallback);
 } else { fallback();}
 }
 
-$("ctaOrder").addEventListener("click", function () {
+/* ---------- 付款弹窗：点下单先弹出 TRC20 收款地址 ---------- */
+function openPayModal() {
+var p = selected();
+var price = unitPrice();
+$("modalAddr").textContent = state.usdtAddress;
+if (price !== null) {
+var idx = Math.min(state.tierIdx, p.countries.length - 1);
+$("modalOrder").textContent = p.name + " · " + countryName(p.countries[idx]) + " × " + state.qty + "，总价 " + fmtUsdt(price * state.qty) + " USDT";
+} else {
+$("modalOrder").textContent = p.name + " × " + state.qty + "，价格私聊确认";
+}
+$("payModal").classList.add("show");
+$("payModal").setAttribute("aria-hidden", "false");
+}
+function closePayModal() {
+$("payModal").classList.remove("show");
+$("payModal").setAttribute("aria-hidden", "true");
+}
+$("ctaOrder").addEventListener("click", function (e) {
+e.preventDefault();
+openPayModal();
+});
+$("btnModalClose").addEventListener("click", closePayModal);
+$("payModal").addEventListener("click", function (e) {
+if (e.target === this) closePayModal();
+});
+$("btnCopyModalAddr").addEventListener("click", function () {
+if (state.usdtAddress) copyText(state.usdtAddress, "USDT 收款地址已复制");
+});
+$("btnModalGo").addEventListener("click", function () {
 copyText(orderText(), "订单已复制，去电报粘贴发送就行");
+closePayModal();
+window.open("https://t.me/GT03888", "_blank");
 });
 $("btnCopy").addEventListener("click", function () {
 copyText(orderText(), "订单内容已复制");
@@ -1324,6 +1396,7 @@ $("usdtInput").addEventListener("input", function () {
 state.usdtAddress = this.value.trim() || DEFAULT_USDT_ADDRESS;
 var box = $("usdtBox");
 $("usdtAddr").textContent = state.usdtAddress;
+$("modalAddr").textContent = state.usdtAddress;
 box.classList.add("show");
 });
 
@@ -1334,6 +1407,7 @@ state.tierIdx = 0;
 state.usdtAddress = DEFAULT_USDT_ADDRESS;
 $("usdtInput").value = DEFAULT_USDT_ADDRESS;
 $("usdtAddr").textContent = DEFAULT_USDT_ADDRESS;
+$("modalAddr").textContent = DEFAULT_USDT_ADDRESS;
 $("usdtBox").classList.add("show");
 renderGrid(); renderSettings(); renderTiers(); renderOrder();
 toast("已恢复默认商品和收款地址");
