@@ -165,6 +165,7 @@
       .tier-main { flex: 1; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-width: 0; }
       .tier-country { font-weight: 700; font-size: 15px; }
       .tiers-block { scroll-margin-top: 12px; }
+      .order { scroll-margin-top: 12px; }
       .tier-flag { width: 22px; height: 16px; border-radius: 3px; object-fit: cover; flex: none; box-shadow: 0 0 0 1px rgba(21, 34, 45, .14); }
       .tier-dial { color: var(--muted); font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
       .tier-badge {
@@ -281,38 +282,6 @@
       .notes-list li { display: flex; gap: 9px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font-size: 14.5px; }
       .notes-list svg { width: 17px; height: 17px; color: var(--good); flex: none; margin-top: 3px; }
 
-      /* ---------- settings ---------- */
-      .settings { margin-top: 34px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
-      .settings summary { cursor: pointer; padding: 15px 18px; font-weight: 900; font-size: 16px; list-style: none; display: flex; align-items: center; gap: 9px; min-height: 52px; }
-      .settings summary::-webkit-details-marker { display: none; }
-      .settings summary svg { width: 18px; height: 18px; color: var(--muted); }
-      .settings summary .chev { margin-left: auto; transition: transform .15s ease; }
-      .settings[open ] summary .chev { transform: rotate(180deg); }
-      .settings-body { padding: 2px 18px 18px; }
-      .settings-note { color: var(--muted); font-size: 13px; margin: 0 0 14px; }
-      .set-row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; margin-bottom: 8px; }
-      .set-row input { min-height: 42px; }
-      .set-toggle { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 500; padding: 8px 4px; cursor: pointer; white-space: nowrap; }
-      .set-toggle input { width: 19px; height: 19px; accent-color: var(--accent); }
-      .set-del {
-        width: 42px; height: 42px; border-radius: 10px; cursor: pointer; flex: none;
-        border: 1.5px solid var(--line); background: var(--surface); color: var(--muted);
-        font-size: 16px; display: grid; place-items: center;
-      }
-      .set-add { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; margin-top: 12px; }
-      .set-add button {
-        min-height: 44px; padding: 0 16px; border-radius: 10px; cursor: pointer; border: 0;
-        background: var(--accent); color: #fff; font: inherit; font-weight: 700; font-size: 14.5px;
-      }
-      .set-field { margin-top: 18px; }
-      .set-field label { display: block; font-size: 13.5px; font-weight: 700; margin-bottom: 7px; }
-      .set-actions { margin-top: 16px; display: flex; gap: 9px; flex-wrap: wrap; }
-      .set-reset {
-        min-height: 44px; padding: 0 16px; border-radius: 10px; cursor: pointer;
-        border: 1.5px solid var(--line); background: var(--surface); color: var(--ink);
-        font: inherit; font-weight: 700; font-size: 14.5px;
-      }
-
       footer { margin-top: 36px; color: var(--muted); font-size: 13px; text-align: center; }
       footer a { color: var(--accent); text-decoration: none; font-weight: 700; }
 
@@ -426,7 +395,7 @@
           </section>
         </div>
 
-        <aside class="order" aria-label="下单面板">
+        <aside class="order" id="orderPanel" aria-label="下单面板">
           <h2>下单</h2>
           <div class="sel-summary">
             <span class="tile"><span class="letter" id="selLetter">T</span><img id="selIcon" alt="" onerror="this.style.display='none'" /></span>
@@ -498,29 +467,6 @@
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>国家的便宜贵排序每天更新；你下单时选的档位价格，就是最终要付的价格。</span></li>
         </ul>
       </section>
-
-      <details class="settings" id="settingsBox">
-        <summary>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.55-1 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34h.01a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55h.01a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87v.01a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1Z"/></svg>
-          商家设置（店主用）
-          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-        </summary>
-        <div class="settings-body">
-          <p class="settings-note">在这里改商品名、上架状态，或临时改 USDT 收款地址。页面默认收款地址是 TPspmThQbEdiSWg5afkJB3NSi5g9ybPcAX，在这里改只是临时换一下。价格自动算，国家从便宜到贵自动排，不用手动改价。改动只在本次打开页面时有效，关掉页面会恢复默认。</p>
-          <div id="settingsList"></div>
-          <div class="set-add">
-            <input type="text" id="newName" placeholder="新商品名，如：Spotify" aria-label="新商品名" />
-            <button type="button" id="btnAdd">添加商品</button>
-          </div>
-          <div class="set-field">
-            <label for="usdtInput">USDT 收款地址（TRC20）— 默认地址已填好，在这里改只是临时换，刷新页面恢复默认</label>
-            <input type="text" id="usdtInput" placeholder="T 开头的 TRC20 地址" autocomplete="off" value="TPspmThQbEdiSWg5afkJB3NSi5g9ybPcAX" />
-          </div>
-          <div class="set-actions">
-            <button type="button" class="set-reset" id="btnReset">恢复默认商品</button>
-          </div>
-        </div>
-      </details>
 
       <footer>
         全球接码 · 有问题直接电报私聊店主 <a href="https://t.me/GT03888" target="_blank" rel="noopener">@GT03888</a>
@@ -1043,6 +989,16 @@ el.scrollIntoView({behavior: smooth ? "smooth" : "auto", block: "start"});
 });
 }
 
+function scrollToOrder() {
+requestAnimationFrame(function () {
+var el = document.getElementById("orderPanel");
+if (el) {
+var smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+el.scrollIntoView({behavior: smooth ? "smooth" : "auto", block: "start"});
+}
+});
+}
+
 /* ---------- 搜索：App 与国家 ---------- */
 function countryMatches(key, q, qDigits) {
 var name = countryName(key);
@@ -1121,7 +1077,7 @@ state.query = "";
 $("searchInput").value = "";
 $("searchClear").hidden = true;
 renderGrid(); renderTiers(); renderOrder(); renderCountryResults();
-scrollToTiers();
+scrollToOrder();
 });
 box.appendChild(b);
 });
@@ -1178,6 +1134,7 @@ b.appendChild(price);
 b.addEventListener("click", function () {
 state.tierIdx = i;
 renderTiers(); renderOrder();
+scrollToOrder();
 });
 tierList.appendChild(b);
 });
@@ -1335,85 +1292,6 @@ $("qtyPlus").addEventListener("click", function () {
 if (state.qty < 99) { state.qty++; renderOrder();}
 });
 
-/* ---------- 商家设置 ---------- */
-function renderSettings() {
-var box = $("settingsList");
-box.innerHTML = "";
-products.forEach(function (p) {
-var row = document.createElement("div");
-row.className = "set-row";
-var nameIn = document.createElement("input");
-nameIn.type = "text"; nameIn.value = p.name;
-nameIn.setAttribute("aria-label", "商品名");
-nameIn.addEventListener("input", function () {
-p.name = this.value;
-renderGrid(); renderTiers(); renderOrder();
-});
-var tog = document.createElement("label");
-tog.className = "set-toggle";
-var cb = document.createElement("input");
-cb.type = "checkbox"; cb.checked = p.on;
-cb.addEventListener("change", function () {
-p.on = this.checked;
-if (!p.on && state.selectedId === p.id) {
-var first = products.filter(function (x) { return x.on;})[0];
-if (first) { state.selectedId = first.id; state.tierIdx = 0;}
-}
-renderGrid(); renderTiers(); renderOrder();
-});
-tog.appendChild(cb);
-tog.appendChild(document.createTextNode("上架"));
-var del = document.createElement("button");
-del.type = "button"; del.className = "set-del"; del.textContent = "✕";
-del.setAttribute("aria-label", "删除 " + p.name);
-del.addEventListener("click", function () {
-products = products.filter(function (x) { return x.id!== p.id;});
-if (state.selectedId === p.id && products.length) {
-var first = products.filter(function (x) { return x.on;})[0] || products[0];
-state.selectedId = first.id; state.tierIdx = 0;
-}
-renderGrid(); renderSettings(); renderTiers(); renderOrder();
-});
-row.appendChild(nameIn); row.appendChild(tog); row.appendChild(del);
-box.appendChild(row);
-});
-}
-
-$("btnAdd").addEventListener("click", function () {
-var name = $("newName").value.trim();
-if (!name) { toast("先填新商品的名字"); return;}
-products.push({
-id: "custom-" + Date.now(),
-name: name, en: name, slug: "", sim: "", icon: "",
-countries: [], live: false, on: true
-});
-$("newName").value = "";
-renderGrid(); renderSettings();
-toast("已添加商品：" + name);
-});
-
-$("usdtInput").addEventListener("input", function () {
-state.usdtAddress = this.value.trim() || DEFAULT_USDT_ADDRESS;
-var box = $("usdtBox");
-$("usdtAddr").textContent = state.usdtAddress;
-$("modalAddr").textContent = state.usdtAddress;
-box.classList.add("show");
-});
-
-$("btnReset").addEventListener("click", function () {
-products = freshProducts();
-state.selectedId = "telegram";
-state.tierIdx = 0;
-state.usdtAddress = DEFAULT_USDT_ADDRESS;
-$("usdtInput").value = DEFAULT_USDT_ADDRESS;
-$("usdtAddr").textContent = DEFAULT_USDT_ADDRESS;
-$("modalAddr").textContent = DEFAULT_USDT_ADDRESS;
-$("usdtBox").classList.add("show");
-renderGrid(); renderSettings(); renderTiers(); renderOrder();
-toast("已恢复默认商品和收款地址");
-refreshPrices();
-});
-
 /* ---------- 实时价格排序：5sim 游客接口 ----------
 每个服务取全部有货国家，从便宜到贵排。
 5sim 返回的是按运营商嵌套的数据（国家 -> 运营商 -> {cost, count}），取每个国家
@@ -1480,12 +1358,10 @@ $("priceNote").innerHTML = '<span class="dot"></span>国家已按今日最新价
 /* ---------- 初始化 ---------- */
 $("usdtAddr").textContent = state.usdtAddress;
 $("usdtBox").classList.add("show");
-if ($("usdtInput")) $("usdtInput").value = state.usdtAddress;
 renderGrid();
 renderTiers();
 renderPay();
 renderOrder();
-renderSettings();
 $("searchInput").addEventListener("input", function () {
 state.query = this.value.trim();
 $("searchClear").hidden = !this.value;
