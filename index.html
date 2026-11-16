@@ -506,15 +506,16 @@
 "use strict";
 
 /* 定价：卖价（USDT）= 成本（美元）+ 固定加价，向上取整到整数，按 1 USDT ≈ 7 元换算。
+   先按原公式算卖价（加价 15 元，精养一年档卖价>8.33 再加 1 USDT），
    国内 App（微信/QQ/今日头条/陌陌/探探/Soul/微博/哔哩哔哩/百度/淘宝/闲鱼/拼多多/支付宝/钉钉/知乎）
-   加价 17 元，其他 App 加价 15 元。
-   档位标签按卖价分：≤4.86 USDT 特价账号，≤8.33 精养半年，其余精养一年。
-   精养一年档（卖价>8.33）再加 1 USDT。 */
+   在这个卖价上再加 2 USDT。
+   档位标签按卖价分：≤4.86 USDT 特价账号，≤8.33 精养半年，其余精养一年。 */
 var DOMESTIC_IDS = ["wechat", "qq", "toutiao", "momo", "tantan", "soul", "weibo", "bilibili", "baidu", "taobao", "xianyu", "pinduoduo", "alipay", "dingtalk", "zhihu"];
 function tierPrice(costUsd, productId) {
-var add = DOMESTIC_IDS.indexOf(productId) >= 0 ? 17 / 7 : 15 / 7;
-var base = Math.ceil(costUsd + add);
-return base > 8.33 ? base + 1 : base;
+var base = Math.ceil(costUsd + 15 / 7);
+var price = base > 8.33 ? base + 1 : base;
+if (DOMESTIC_IDS.indexOf(productId) >= 0) price += 2;
+return price;
 }
 function tierLabelByPrice(price) {
 if (price <= 4.86) return "特价账号";
