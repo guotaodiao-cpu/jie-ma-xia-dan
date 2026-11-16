@@ -508,7 +508,7 @@
 /* 定价：原价 = 成本（美元）+ 15 元加价，向上取整到整数，按 1 USDT ≈ 7 元换算；
    精养一年档（原价>8.33）原价上再加 1 USDT；国内 App 原价上再加 2 USDT。
    档位按原价分：≤4.86 USDT 特价账号，≤8.33 精养半年，其余精养一年。
-   国内 App 的最终卖价 = 原价 × 倍数：特价 ×1，精养半年 ×2，精养一年 ×3；
+   国内 App 的最终卖价：特价按原价，精养半年 = 原价 ×2，精养一年 = 25 USDT；
    国外 App 不乘倍数，卖价就是原价。 */
 var DOMESTIC_IDS = ["wechat", "qq", "toutiao", "momo", "tantan", "soul", "weibo", "bilibili", "baidu", "taobao", "xianyu", "pinduoduo", "alipay", "dingtalk", "zhihu"];
 function tierOrigPrice(costUsd, productId) {
@@ -525,7 +525,7 @@ var orig = tierOrigPrice(costUsd, productId);
 if (DOMESTIC_IDS.indexOf(productId) < 0) return orig;
 var label = tierLabelByPrice(orig);
 if (label === "精养半年") return orig * 2;
-if (label === "精养一年") return orig * 3;
+if (label === "精养一年") return 25;
 return orig;
 }
 function tierLabelByPrice(price) {
