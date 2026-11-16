@@ -463,23 +463,6 @@
         </aside>
       </div>
 
-      <section class="block" aria-label="付款说明">
-        <h2>付款说明</h2>
-        <a class="pay-banner" href="https://t.me/GT03888" target="_blank" rel="noopener">如需使用微信或支付宝付款，请联系我的电报 @GT03888</a>
-        <div class="pay-card">
-          <div class="pc-head">
-            <span class="ptile"><span class="letter">U</span><img src="https://cdn.simpleicons.org/tether" alt="" loading="lazy" onerror="this.style.display='none'" /></span>
-            <b>USDT 付款</b>
-          </div>
-          <p>线上只收 USDT，走 TRC20 网络，价格按 1 USDT ≈ 7.2 元换算。下单后把订单发给店主，按订单上的 USDT 金额转到下面这个收款地址，转好账把交易截图发过去，确认后马上发码。</p>
-          <div class="addr-box show" id="usdtBox">
-            <div style="font-size:13px;font-weight:700;margin-bottom:6px;">USDT 收款地址（TRC20）</div>
-            <div class="addr-val" id="usdtAddr">TPspmThQbEdiSWg5afkJB3NSi5g9ybPcAX</div>
-            <button type="button" class="addr-copy" id="btnCopyAddr">一键复制收款地址</button>
-          </div>
-        </div>
-      </section>
-
       <section class="block" aria-label="下单须知">
         <h2>下单须知</h2>
         <ul class="notes-list">
@@ -1468,9 +1451,6 @@ window.open("https://t.me/GT03888", "_blank");
 $("btnCopy").addEventListener("click", function () {
 copyText(orderText(), "订单内容已复制");
 });
-$("btnCopyAddr").addEventListener("click", function () {
-if (state.usdtAddress) copyText(state.usdtAddress, "USDT 收款地址已复制");
-});
 $("qtyMinus").addEventListener("click", function () {
 if (state.qty > 1) { state.qty--; renderOrder();}
 });
@@ -1542,8 +1522,6 @@ $("priceNote").innerHTML = '<span class="dot"></span>国家已按今日最新价
 }
 
 /* ---------- 初始化 ---------- */
-$("usdtAddr").textContent = state.usdtAddress;
-$("usdtBox").classList.add("show");
 renderGrid();
 renderTiers();
 renderPay();
