@@ -197,7 +197,7 @@
       .sel-summary .sprice { color: var(--good); font-weight: 900; font-variant-numeric: tabular-nums; font-size: 14.5px; }
       .field { margin-top: 16px; }
       .field .flabel { display: block; font-size: 13.5px; font-weight: 700; margin-bottom: 7px; }
-      input[type="text"], input[type="number"] {
+      input[type="text"], input[type="number"], input[type="email"] {
         width: 100%; font: inherit; font-size: 15px; color: var(--ink);
         background: var(--surface); border: 1.5px solid var(--line); border-radius: 10px;
         padding: 9px 12px; min-height: 44px;
@@ -259,6 +259,16 @@
         font: inherit; font-size: 14.5px; font-weight: 700;
       }
       .order-hint { margin-top: 11px; font-size: 13px; color: var(--muted); text-align: center; }
+      /* ---------- 自动发货订单进度 ---------- */
+      .auto-status { margin-top: 12px; background: var(--accent-soft); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+      .auto-status[hidden] { display: none; }
+      .auto-status .st-title { font-weight: 900; font-size: 15px; }
+      .auto-status .st-line { margin-top: 4px; font-size: 14px; word-break: break-all; }
+      .auto-status .st-code { margin-top: 8px; font-size: 20px; font-weight: 900; letter-spacing: .06em; word-break: break-all; }
+      .auto-status .st-code[hidden] { display: none; }
+      .auto-status .st-note { margin-top: 6px; font-size: 13px; color: var(--muted); }
+      .modal-manual { display: block; width: 100%; margin-top: 10px; background: transparent; border: 0; color: var(--accent); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+      .modal-manual[hidden] { display: none; }
 
       /* ---------- pay info / notes ---------- */
       .block { margin-top: 34px; }
@@ -423,21 +433,33 @@
           </div>
 
           <div class="field">
-            <span class="flabel" id="payLabel">付款方式</span>
-            <div class="pay-grid single" role="radiogroup" aria-labelledby="payLabel" id="payGrid"></div>
+            <label class="flabel" for="emailInput">收件邮箱（自动发货：号码和验证码发到这个邮箱）</label>
+            <input type="email" id="emailInput" inputmode="email" autocomplete="email" placeholder="例如：你的邮箱@qq.com" />
           </div>
 
           <div class="preview" id="orderPreview" aria-label="订单内容预览"></div>
 
+          <div class="field">
+            <span class="flabel" id="payLabel">付款方式</span>
+            <div class="pay-grid single" role="radiogroup" aria-labelledby="payLabel" id="payGrid"></div>
+          </div>
+
           <a class="cta" id="ctaOrder" href="https://t.me/GT03888" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.9 4.6c.2-1-.6-1.9-1.6-1.7L2.7 9.3c-1 .3-1.2 1.6-.3 2.2l4.6 3 2.1 5.4c.3.8 1.4 1 2 .3l2.4-2.6 4.2 3c.8.6 1.9.1 2-.8l2.2-15.2ZM8.4 13.5l9.7-6.4c.2-.1.3.2.1.3l-8 7.6-.3 3-1.5-4.5Z"/></svg>
-            <span id="ctaLabel">下单，查看收款地址</span>
+            下单，查看收款地址
           </a>
+          <a class="pay-notice" href="https://t.me/GT03888" target="_blank" rel="noopener">如需使用微信或支付宝付款，请联系我的电报 @GT03888</a>
           <button type="button" class="cta-sub" id="btnCopy">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
             只复制订单内容
           </button>
-          <p class="order-hint" id="orderHint">点上面按钮会先弹出收款地址，付完款再去电报发订单和付款截图。</p>
+          <p class="order-hint">点上面按钮会先弹出收款地址，付完款再去电报发订单和付款截图。</p>
+          <div class="auto-status" id="autoStatus" hidden>
+            <div class="st-title" id="autoStatusTitle">订单进度</div>
+            <div class="st-line" id="autoStatusLine">—</div>
+            <div class="st-code" id="autoStatusCode" hidden></div>
+            <div class="st-note" id="autoStatusNote"></div>
+          </div>
         </aside>
       </div>
 
@@ -485,12 +507,12 @@
           <div class="addr-val" id="modalAddr">TPspmThQbEdiSWg5afkJB3NSi5g9ybPcAX</div>
           <button type="button" class="addr-copy" id="btnCopyModalAddr">一键复制收款地址</button>
         </div>
-        <p class="modal-contact" id="modalContact" hidden></p>
         <ol class="modal-steps" id="modalSteps">
           <li>复制上面的地址，按总价转 USDT（走 TRC20 网络）。</li>
           <li>转好后点下面按钮，去电报把订单和付款截图发给店主，确认后马上发码。</li>
         </ol>
         <button type="button" class="cta" id="btnModalGo">已付款，去电报发订单</button>
+        <button type="button" class="modal-manual" id="btnModalManual" hidden>改走电报人工下单</button>
         <button type="button" class="modal-close" id="btnModalClose">先不付，关闭</button>
       </div>
     </div>
@@ -869,9 +891,7 @@ var SERVICES = [
 ];
 
 var PAY_METHODS = [
-{ id: "usdt", name: "USDT（TRC20）", slug: "tether", letter: "U"},
-{ id: "wechat", name: "微信", slug: "wechat", letter: "微", contact: true },
-{ id: "alipay", name: "支付宝", slug: "alipay", letter: "支", contact: true }
+{ id: "usdt", name: "USDT（TRC20）", slug: "tether", letter: "U"}
 ];
 
 function freshProducts() {
@@ -1166,27 +1186,12 @@ b.appendChild(t);
 var n = document.createElement("span");
 n.className = "pname2"; n.textContent = m.name;
 b.appendChild(n);
-if (m.contact) {
-var note = document.createElement("span");
-note.className = "pnote"; note.textContent = "联系店主电报";
-b.appendChild(note);
-}
 b.addEventListener("click", function () {
 state.payId = m.id;
 renderPay(); renderOrder();
 });
 payGrid.appendChild(b);
 });
-renderPayLabel();
-}
-
-/* 下单按钮和提示跟着付款方式变：USDT 看收款地址，微信/支付宝去电报找店主 */
-function renderPayLabel() {
-var isUsdt = state.payId === "usdt";
-$("ctaLabel").textContent = isUsdt ? "下单，查看收款地址" : "下单，去电报联系店主";
-$("orderHint").textContent = isUsdt
-? "点上面按钮会先弹出收款地址，付完款再去电报发订单和付款截图。"
-: "点上面按钮会复制订单并打开店主电报，付款方式请在电报里和店主确认。";
 }
 
 /* ---------- 订单面板 ---------- */
@@ -1208,6 +1213,7 @@ lines.push("数量：" + state.qty);
 lines.push("价格：私聊店主确认");
 }
 lines.push("付款方式：" + payName());
+if (state.autoEmail) lines.push("邮箱：" + state.autoEmail);
 lines.push("订单号：" + state.orderNo);
 return lines.join("\n");
 }
@@ -1236,6 +1242,153 @@ $("totalVal").textContent = "—";
 }
 $("qtyVal").textContent = state.qty;
 $("orderPreview").textContent = orderText();
+}
+
+/* ---------- 自动发货（后端 Worker，未填地址时等于不存在） ---------- */
+var AUTO_BACKEND = ""; // 自动发货后端 Worker 地址，部署后填，例如 "https://jie-ma-auto-delivery.<子域名>.workers.dev"，留空则只走原来的电报人工流程
+var AUTO_MANUAL_STEPS = null; // 弹窗原步骤，自动模式下临时替换，手动模式恢复
+var autoPollTimer = null;
+
+function autoEmailOk(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v || ""); }
+function autoActive() { return !!AUTO_BACKEND; }
+function autoOrderKey() { return "jm_auto_order"; }
+
+function autoStatusText(s) {
+switch (s) {
+case "awaiting_payment": return ["等待付款", "按弹窗里的地址转 USDT，转好后点“我已付款，开始自动发货”。", "30 分钟内没收到付款，订单自动作废。"];
+case "paid": return ["已收到付款", "正在买号…", ""];
+case "needs_manual": return ["正在处理", "店主正在处理这单，稍等一下。", "也可以电报联系 @GT03888。"];
+case "waiting_sms": return ["号码已发到你的邮箱", "去 App 里填号码，点发送验证码，码一到就发到你邮箱。", "号码 15 分钟内有效，尽快用。"];
+case "done": return ["验证码已发到你的邮箱", "把验证码填进 App，完成注册。", ""];
+case "refund_pending": return ["没收到码，已取消并标记退款", "USDT 会退回你付款的钱包，请留意到账。", "有问题电报联系 @GT03888。"];
+case "expired": return ["订单已过期", "30 分钟内没收到付款，重新下单即可。", ""];
+default: return ["订单进度", "", ""];
+}
+}
+function autoRenderStatus(d) {
+var box = $("autoStatus");
+if (!d) { box.hidden = true; return; }
+var t = autoStatusText(d.status);
+box.hidden = false;
+$("autoStatusTitle").textContent = t[0];
+var phones = (d.items || []).map(function (it) { return it.phone; }).filter(Boolean);
+var codes = (d.items || []).map(function (it) { return it.code; }).filter(Boolean);
+var line = t[1];
+if (phones.length) line += " 号码：" + phones.join("、");
+$("autoStatusLine").textContent = line;
+var codeEl = $("autoStatusCode");
+if (codes.length) { codeEl.hidden = false; codeEl.textContent = "验证码：" + codes.join("、"); }
+else codeEl.hidden = true;
+$("autoStatusNote").textContent = (d.note || t[2] || "");
+}
+function autoFetchStatus() {
+if (!state.autoOrderId) return;
+fetch(AUTO_BACKEND + "/api/orders/" + encodeURIComponent(state.autoOrderId), { headers: { "Accept": "application/json" } })
+.then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.json(); })
+.then(function (d) {
+autoRenderStatus(d);
+if (d.status === "done" || d.status === "refund_pending" || d.status === "expired") autoStopPolling(true);
+})
+.catch(function () { /* 网络抖动就等下一次轮询，不打扰客户 */ });
+}
+function autoStartPolling() {
+autoStopPolling(false);
+autoFetchStatus();
+autoPollTimer = setInterval(autoFetchStatus, 10000);
+}
+function autoStopPolling(clearSaved) {
+if (autoPollTimer) { clearInterval(autoPollTimer); autoPollTimer = null; }
+if (clearSaved) { try { localStorage.removeItem(autoOrderKey()); } catch (e) {} }
+}
+function autoRestore() {
+if (!autoActive()) return;
+var id = null;
+try { id = localStorage.getItem(autoOrderKey()); } catch (e) {}
+if (!id) return;
+state.autoOrderId = id;
+autoStartPolling();
+}
+// 点下单：有后端就先建自动订单，失败则回落到原来的人工流程。
+function autoStartOrder() {
+var p = selected();
+var price = unitPrice();
+if (price === null) { openPayModal(); return; } // 价格私聊的服务不走自动
+if (state.qty > 5) { toast("自动发货一次最多 5 个，多买请电报联系店主"); openPayModal(); return; }
+var email = ($("emailInput").value || "").trim();
+if (!autoEmailOk(email)) {
+toast("先填收件邮箱，号码和验证码要发到这个邮箱");
+$("emailInput").focus();
+scrollToOrder();
+return;
+}
+var idx = Math.min(state.tierIdx, p.countries.length - 1);
+var ck = p.countries[idx];
+var key = p.sim + "|" + ck + "|" + state.qty + "|" + email;
+// 同一单重复点下单：直接复用已建的订单，不重复建单。
+if (state.autoOrderId && state.autoKey === key) { openPayModal(); autoStartPolling(); return; }
+state.autoOrderId = null; state.autoEmail = ""; state.autoKey = "";
+autoStopPolling(true); autoRenderStatus(null);
+fetch(AUTO_BACKEND + "/api/orders", {
+method: "POST",
+headers: { "Content-Type": "application/json", "Accept": "application/json" },
+body: JSON.stringify({
+email: email, service: p.sim, serviceName: p.name, country: ck,
+countryName: countryName(ck), qty: state.qty,
+amountUsdt: Math.round(price * state.qty * 100) / 100, orderNo: state.orderNo
+})
+})
+.then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+.then(function (res) {
+if (!res.ok || !res.d.orderId) {
+toast(res.d && res.d.error === "amount mismatch" ? "价格变了，刷新页面重新下单" : "自动下单暂时不可用，仍可走电报人工下单");
+openPayModal();
+return;
+}
+state.autoOrderId = res.d.orderId;
+state.autoEmail = email;
+state.autoKey = key;
+try { localStorage.setItem(autoOrderKey(), res.d.orderId); } catch (e) {}
+renderOrder();
+openPayModal();
+autoStartPolling();
+})
+.catch(function () {
+toast("自动下单暂时不可用，仍可走电报人工下单");
+openPayModal();
+});
+}
+// 弹窗里点“我已付款”：让后端立刻查一次到账。
+function autoConfirmPaid() {
+if (!state.autoOrderId) return;
+fetch(AUTO_BACKEND + "/api/orders/" + encodeURIComponent(state.autoOrderId) + "/check-payment", {
+method: "POST", headers: { "Accept": "application/json" }
+})
+.then(function (r) { return r.json(); })
+.then(function (d) {
+autoRenderStatus(d);
+if (d.status === "awaiting_payment") {
+toast("还没收到这笔付款，确认转好账再点一次");
+} else {
+closePayModal();
+autoStartPolling();
+toast("已收到付款，正在自动发货");
+}
+})
+.catch(function () { toast("网络有点慢，稍后再点一次"); });
+}
+// 弹窗按钮和步骤随“自动/人工”切换。
+function autoSyncModal() {
+var go = $("btnModalGo"), manual = $("btnModalManual"), steps = $("modalSteps");
+if (AUTO_MANUAL_STEPS === null) AUTO_MANUAL_STEPS = steps.innerHTML;
+if (state.autoOrderId) {
+go.textContent = "我已付款，开始自动发货";
+manual.hidden = false;
+steps.innerHTML = "<li>复制上面的地址，按总价转 USDT（走 TRC20 网络）。</li><li>转好后点下面按钮，系统确认到账后自动买号发码到你邮箱。</li>";
+} else {
+go.textContent = "已付款，去电报发订单";
+manual.hidden = true;
+steps.innerHTML = AUTO_MANUAL_STEPS;
+}
 }
 
 /* ---------- 复制 ---------- */
@@ -1268,31 +1421,16 @@ navigator.clipboard.writeText(text).then(done, fallback);
 function openPayModal() {
 var p = selected();
 var price = unitPrice();
-var isUsdt = state.payId === "usdt";
+$("modalAddr").textContent = state.usdtAddress;
 if (price !== null) {
 var idx = Math.min(state.tierIdx, p.countries.length - 1);
 $("modalOrder").textContent = p.name + " · " + countryName(p.countries[idx]) + " × " + state.qty + "，总价 " + fmtUsdt(price * state.qty) + " USDT";
 } else {
 $("modalOrder").textContent = p.name + " × " + state.qty + "，价格私聊确认";
 }
-if (isUsdt) {
-$("payModalTitle").textContent = "付款地址";
-$("modalAddr").textContent = state.usdtAddress;
-$("modalAddrBox").hidden = false;
-$("modalContact").hidden = true;
-$("modalSteps").innerHTML = "<li>复制上面的地址，按总价转 USDT（走 TRC20 网络）。</li><li>转好后点下面按钮，去电报把订单和付款截图发给店主，确认后马上发码。</li>";
-$("btnModalGo").textContent = "已付款，去电报发订单";
-} else {
-var mName = payName();
-$("payModalTitle").textContent = mName + "付款";
-$("modalAddrBox").hidden = true;
-$("modalContact").hidden = false;
-$("modalContact").textContent = mName + "付款请联系店主电报 @GT03888，店主会发你收款方式。";
-$("modalSteps").innerHTML = "<li>点下面按钮，复制订单并打开店主电报。</li><li>在电报里把订单发给店主，店主发你" + mName + "收款方式，付款后把截图发过去，确认后马上发码。</li>";
-$("btnModalGo").textContent = "复制订单，去电报联系店主";
-}
 $("payModal").classList.add("show");
 $("payModal").setAttribute("aria-hidden", "false");
+autoSyncModal();
 }
 function closePayModal() {
 $("payModal").classList.remove("show");
@@ -1300,7 +1438,8 @@ $("payModal").setAttribute("aria-hidden", "true");
 }
 $("ctaOrder").addEventListener("click", function (e) {
 e.preventDefault();
-openPayModal();
+if (autoActive()) autoStartOrder();
+else openPayModal();
 });
 $("btnModalClose").addEventListener("click", closePayModal);
 $("payModal").addEventListener("click", function (e) {
@@ -1310,6 +1449,18 @@ $("btnCopyModalAddr").addEventListener("click", function () {
 if (state.usdtAddress) copyText(state.usdtAddress, "USDT 收款地址已复制");
 });
 $("btnModalGo").addEventListener("click", function () {
+if (state.autoOrderId) { autoConfirmPaid(); return; }
+copyText(orderText(), "订单已复制，去电报粘贴发送就行");
+closePayModal();
+window.open("https://t.me/GT03888", "_blank");
+});
+$("btnModalManual").addEventListener("click", function () {
+state.autoOrderId = null;
+state.autoEmail = "";
+state.autoKey = "";
+autoStopPolling(true);
+autoRenderStatus(null);
+autoSyncModal();
 copyText(orderText(), "订单已复制，去电报粘贴发送就行");
 closePayModal();
 window.open("https://t.me/GT03888", "_blank");
@@ -1412,6 +1563,7 @@ renderCountryResults();
 $("searchInput").focus();
 });
 refreshPrices();
+autoRestore();
 })();
 </script>
 </body>
