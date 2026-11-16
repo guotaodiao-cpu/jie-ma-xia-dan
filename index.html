@@ -505,9 +505,11 @@
 "use strict";
 
 /* 定价：卖价（USDT）= 成本（美元）+ 固定加价，向上取整到整数，按 1 USDT ≈ 7 元换算。
-   档位标签按卖价分：≤4.86 USDT 特价账号，≤8.33 精养半年，其余精养一年。 */
+   档位标签按卖价分：≤4.86 USDT 特价账号，≤8.33 精养半年，其余精养一年。
+   精养一年档（卖价>8.33）再加 1 USDT。 */
 function tierPrice(costUsd) {
-return Math.ceil(costUsd + 15 / 7);
+var base = Math.ceil(costUsd + 15 / 7);
+return base > 8.33 ? base + 1 : base;
 }
 function tierLabelByPrice(price) {
 if (price <= 4.86) return "特价账号";
